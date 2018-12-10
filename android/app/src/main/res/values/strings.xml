@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">test_react_capacitor</string>
+    <string name="title_activity_main">test_react_capacitor</string>
+    <string name="package_name">com.test.react_capacitor</string>
+    <string name="fileprovider_authority">com.test.react_capacitor.fileprovider</string>
+    <string name="custom_url_scheme">com.test.react_capacitor</string>
+</resources>
