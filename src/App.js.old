@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import { render } from 'react-dom'
 import './App.css';
 //AR.js imports
-import { AFrameRenderer, Marker } from 'react-web-ar'
+//import { AFrameRenderer, Marker } from 'react-web-ar'
 //capacitor imports
 import {Plugins} from '@capacitor/core';
 const {Geolocation, Camera} = Plugins;
@@ -41,8 +41,10 @@ class App extends Component {
         return (
             <div className="App">
             <AFrameRenderer
-                arToolKit={{ sourceType: 'webcam', sourceUrl: './images/hiro_marker.png'}}
+                arToolKit={{ sourceType: 'webcam', }}
                 stats
+                gps-position
+                compass-rotation
             >
                 <header className="App-header">
                     <h1>Test react and capacitor</h1>
@@ -51,14 +53,16 @@ class App extends Component {
                     <p>lat: {this.state.lat}</p>
                     <p>lng: {this.state.lng}</p>
                 </header>
-                
-                <Marker parameters={{ preset: 'hiro' }}>
-                <a-box color='pink' material='opacity: 1;' position="0 0.003 0" scale='0.4 0.4 0.4'>
+
+                <Marker parameters={{ preset: 'unknown' }}>
+                {/* <a-box color='pink' material='opacity: 1;' position="0 0.003 0" scale='0.4 0.4 0.4'>
                     <a-animation attribute="rotation" to="360 0 0" dur="5000" easing="linear" repeat="indefinite" />
                 </a-box>
+                {/* <a-asset-item  src="./images/innoside.png"></a-asset-item>
+                <a-entity transparent-texture gps-place="longitude: 37.469666813539; latitude: 55.153989996861"></a-entity> */}
                 </Marker>
                 
-            </AFrameRenderer>
+            </AFrameRenderer> 
           </div>
         );
     }

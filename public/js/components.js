@@ -1,4 +1,4 @@
-AFRAME.registerComponent('transparent-texture', {
+window.AFRAME.registerComponent('transparent-texture', {
 	schema: {
 		alphaTest: {
 			type: 'number',
@@ -30,7 +30,7 @@ AFRAME.registerComponent('transparent-texture', {
 });
 
 
-AFRAME.registerComponent('gps-position', {
+window.AFRAME.registerComponent('gps-position', {
 	
 	watchId: null,
 	zeroCrd: null,
@@ -117,10 +117,10 @@ AFRAME.registerComponent('gps-position', {
 	},
 	
 	calcMeters: function(src, dest) {
-		var dlon = THREE.Math.degToRad(dest.longitude - src.longitude);
-		var dlat = THREE.Math.degToRad(dest.latitude - src.latitude);
+		var dlon = window.THREE.Math.degToRad(dest.longitude - src.longitude);
+		var dlat = window.THREE.Math.degToRad(dest.latitude - src.latitude);
 		
-		var a = (Math.sin(dlat / 2) * Math.sin(dlat / 2)) + Math.cos(THREE.Math.degToRad(src.latitude)) * Math.cos(THREE.Math.degToRad(dest.latitude)) * (Math.sin(dlon / 2) * Math.sin(dlon / 2));
+		var a = (Math.sin(dlat / 2) * Math.sin(dlat / 2)) + Math.cos(window.THREE.Math.degToRad(src.latitude)) * Math.cos(window.THREE.Math.degToRad(dest.latitude)) * (Math.sin(dlon / 2) * Math.sin(dlon / 2));
 		var angle = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		
 		return angle * 6378160;
@@ -134,7 +134,7 @@ AFRAME.registerComponent('gps-position', {
 });
 
 
-AFRAME.registerComponent('compass-rotation', {
+window.AFRAME.registerComponent('compass-rotation', {
 	
 	lookControls: null,
 	lastTimestamp: 0,
@@ -278,7 +278,7 @@ AFRAME.registerComponent('compass-rotation', {
 		
 		var offset = ( heading - ( camera_rotation - yaw_rotation ) ) % 360;
 		
-		this.lookControls.yawObject.rotation.y = THREE.Math.degToRad(offset);
+		this.lookControls.yawObject.rotation.y = window.THREE.Math.degToRad(offset);
 		
 	},
 	
@@ -290,7 +290,7 @@ AFRAME.registerComponent('compass-rotation', {
 });
 
 
-AFRAME.registerComponent('gps-place', {
+window.AFRAME.registerComponent('gps-place', {
 	
 	cameraGpsPosition: null,
 	deferredInitInterval: 0,

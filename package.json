@@ -6,10 +6,12 @@
     "@capacitor/android": "^1.0.0-beta.11",
     "@capacitor/cli": "^1.0.0-beta.11",
     "@capacitor/core": "^1.0.0-beta.11",
+    "aframe": "^0.8.2",
+    "ar.js": "^1.6.2",
+    "ecef-projector": "^1.0.1",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-scripts": "2.1.1",
-    "react-web-ar": "^1.0.0-beta2"
+    "react-scripts": "2.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
