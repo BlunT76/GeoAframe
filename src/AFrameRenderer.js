@@ -6,6 +6,7 @@ import Acursor from './components/Acursor'
 import ARgeo from './components/ARgeo'
 import AtextGeo from './components/AtextGeo'
 import Orientation from './components/Orientation'
+import Camera from './components/Camera'
 // const ar = 'ar.js' const AFrame = 'aframe.js' const AFrame = () => ( function
 // AFrame () {
 class AFrameRenderer extends Component {
@@ -20,9 +21,10 @@ class AFrameRenderer extends Component {
   render() {
     return (
       <a-scene stats >
+      {/* <Camera /> */}
         <Orientation />
         {/* <Acursor /> */}
-        <AtextGeo position={{lat: 2, lng: 3, alt:0}} rotation="0 15 0" value="GEOGEO" width="10000"/>
+        <AtextGeo position="0 0 -15" rotation="0 15 0" value="GEOGEO" width="10000"/>
         <Atext position="0 0 -15" rotation="0 15 0" value="innoside" width="10"/> 
         <Atext position="0 1 -15" rotation="0 0 0" value="simplon" width="5"/>
         <Aimage 
@@ -31,10 +33,11 @@ class AFrameRenderer extends Component {
           width="10" 
           height="2.5"
         />
-        
+        <Camera />
 
         {/* <a-camera id="camera" user-height="1.6" gps-position compass-rotation style={{position: 'fixed', top: '10px', width:'100%', height:'100%'}}></a-camera> */}
       </a-scene>
+      
     );
   }
 }

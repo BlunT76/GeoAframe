@@ -4,18 +4,31 @@ const haveDistance = require ('../utils/haversineDistance')
 //Same as Atext with position based on gps coordinates
 
 class AtextGeo extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      pos: null
+    }
+  }
+
+  componentDidMount (){
+    this.getProjection()
+  }
+
+  getProjection = () => {
+    console.log("POSITION: ",this.props.position)
+    this.setState({pos: projector.project(37.8043722, -122.2708026, 0)}) 
+    console.log("POS: ", this.state.pos);
+  }
   
+
   render() {
-    console.log(this.props.position)
-    var pos = projector.project(37.8043722, -122.2708026, 0.0);
-    console.log(pos);
-   
     return (
         <a-text
           font="kelsonsans"
           value={this.props.value}
           width={this.props.width}
-          position= {`${pos[0]} ${pos[1]} 0`}
+          //position= {`${this.state.pos[0]} ${this.state.pos[1]} 0`}
           rotation={this.props.rotation}
         />
     );
