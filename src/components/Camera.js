@@ -1,7 +1,13 @@
 import React, {Component} from 'react';
+import 'aframe-look-at-component';
+import projector from 'ecef-projector';
+import Atext from './Atext'
+import Acursor from './Acursor'
+//import AtextGeo from './AtextGeo'
+
 const AFRAME = window.AFRAME
 const THREE = window.THREE
-const projector = require('ecef-projector');
+
 
 class Camera extends Component {
   constructor(props) {
@@ -9,24 +15,18 @@ class Camera extends Component {
     this.myRef = React.createRef();
     this.state = {
       position: "0 0 0",
-      location: null,
+      positionArr:[],
+      objPos: null,
+      heading: null,
+      //rotation: null,
+      //location: null,
+      lat: null,
+      lng:null,
       watchID: null
     }
   }
 
   componentDidMount() {
-    //create listener to get the camera position
-    AFRAME.registerComponent('listener', {
-      init: function () {
-        this.tick = AFRAME
-          .utils
-          .throttleTick(this.tick, 1000, this);
-      },
-      tick: function () {
-        console.log("CamPosition: ", this.el.getAttribute('position'));
-      }
-    });
-    //launch 
     this.updateCamPosition()
   }
 
@@ -34,17 +34,22 @@ class Camera extends Component {
     navigator.geolocation.clearWatch(this.state.watchID);
   }
 
-  //launch the watchPosition function (dans un setState pour pouvoir le stopper dans le unmount,
-  // je sais pas si c'est bien de faire ca)
+  // launch the watchPosition function (dans un setState pour pouvoir le stopper
+  // dans le unmount, je sais pas si c'est bien de faire ca)
   updateCamPosition = () => {
+    let that = this.props
     if ("geolocation" in navigator) {
       this.setState({
         watchID: navigator
           .geolocation
-          .watchPosition( (position) => {
+          .watchPosition((position,error, options) => {
             let prj = projector.project(position.coords.latitude, position.coords.longitude, 0);
-            console.log(prj)
-            this.setState({position: `${prj[0]} ${prj[1]} ${prj[2]}`})
+            this.setState({position: `${prj[0]} 0 ${prj[1]}`})
+            //this.setState({positionArr: prj})
+            this.setState({lat:position.coords.latitude})
+            this.setState({lng:position.coords.longitude})
+            this.setState({heading:position.coords.heading})
+            that.getCamPosition(prj)
           })
       })
     } else {
@@ -52,27 +57,51 @@ class Camera extends Component {
     }
   }
 
+  // updateObjPosition = (lat,lng) => {
+  //   let prj = projector.project(lat, lng, 0)
+  //   let ox = this.state.positionArr[0] - prj[0]
+  //   let oz = this.state.positionArr[1] - prj[1]
+  //   return `${ox} 0 -${oz}`
+  // }
+
   render() {
     return (
-      <a-entity
-        ref={this.myRef}
-        camera="active: true"
-        look-controls
-        wasd-controls
-        position={this.state.position}
-        data-aframe-default-camera
-        listener>
+      <a-entity /*position={this.state.position}*/>
+        <a-entity
+          id="camera"
+          ref={this.myRef}
+          camera="active: true"
+          look-controls
+          wasd-controls
+          position="0 0 0"
+          listener
+          near="0"
+          axis
+          //look-at="0 0 0"
+          //rotation="0 180 180"
+          //style={this.camStyle}
+          >
+          {/* //affichage de la geolocation de la camera */}
+          <Atext position="-0.2 0 -1" value={`lat: ${this.state.lat}`} rotation="0 0 0" width="0.5" color= "#0F25CE" align="center"/>
+          <Atext position="0.1 0 -1" value={`lng: ${this.state.lng}`} rotation="0 0 0" width="0.5" color= "#0F25CE" align="center"/>
+          <Atext position="0.1 -0.1 -1" value={`heading: ${this.state.heading}`} rotation="0 0 0" width="0.5" color= "#0F25CE" align="center"/>
+          <a-entity cursor="fuse: true; fuseTimeout: 500"
+                position="0 0 -1"
+                geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.007"
+                material="color: blue; shader: flat">
+          </a-entity>
+          
+        </a-entity>
       </a-entity>
     );
   }
 }
-export default Camera;
 
 const camStyle = {
-  position: 'fixed',
-  top: '10px',
-  width: '100%',
-  height: '100%'
+  // position: 'fixed',
+  // top: '10px',
+  // width: '100%',
+  // height: '100%'
 };
 
 const options = {
@@ -80,9 +109,10 @@ const options = {
   timeout: 5000,
   maximumAge: 0
 };
-// Aframe position helper x 	Negative X axis extends left. Positive X Axis
-// extends right. y 	Negative Y axis extends down. Positive Y Axis extends up. z
-// 	Negative Z axis extends in.(devant la camera) Positive Z Axis extends
-// out.(derriere la camera) Aframe rotation helper x 	Pitch, rotation about the
-// X-axis. y 	Yaw, rotation about the Y-axis. z 	Roll, rotation about the
-// Z-axis.
+
+export default Camera;
+
+//passer le projet sous capacitor en apk mobile
+//utiliser un plugin magnetometer, integrer boussole sur camera, tester precision
+//serveur node, bdd qui stocke les poi(mongodb) une page pour ajouter des poi,
+//insomnia

@@ -16,15 +16,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildToolsVersion '27.0.3'
 }
 
 repositories {
-    maven {
-        url  "https://dl.bintray.com/ionic-team/capacitor"
-    }
-    flatDir{
-        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
-    }
+maven { url 'https://dl.bintray.com/ionic-team/capacitor' }
 }
 
 dependencies {

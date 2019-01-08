@@ -1,11 +1,7 @@
 import React, {Component} from 'react';
+import 'aframe-look-at-component';
 
 class Aimage extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //   }
-  // }
   render() {
     return (
         <a-image
@@ -15,6 +11,7 @@ class Aimage extends Component {
           height={this.props.height}
           position= {this.props.position}
           rotation={this.props.rotation}
+          look-at="[camera]"
         />
     );
   }

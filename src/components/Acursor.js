@@ -8,14 +8,14 @@ class Acursor extends Component {
   // }
   render() {
     return (
-      <a-entity camera look-controls wasd-controls>
+      // <a-entity camera look-controls wasd-controls>
       <a-entity cursor="fuse: true; fuseTimeout: 500"
                 position="0 0 -1"
                 geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.007"
                 material="color: blue; shader: flat">
       </a-entity>
-      <a-entity id="box" cursor-listener geometry="primitive: box" material="color: blue"></a-entity>
-    </a-entity>
+      
+    // </a-entity>
     
     // <a-entity id="box" cursor-listener geometry="primitive: box" material="color: blue"></a-entity>
     );

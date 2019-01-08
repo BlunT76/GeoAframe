@@ -7,6 +7,7 @@
     "@capacitor/cli": "^1.0.0-beta.11",
     "@capacitor/core": "^1.0.0-beta.11",
     "aframe": "^0.8.2",
+    "aframe-look-at-component": "^0.7.0",
     "ar.js": "^1.6.2",
     "ecef-projector": "^1.0.1",
     "react": "^16.6.3",

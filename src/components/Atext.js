@@ -1,11 +1,7 @@
 import React, {Component} from 'react';
+import 'aframe-look-at-component';
 
 class Atext extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //   }
-  // }
   render() {
     return (
         <a-text
@@ -14,6 +10,8 @@ class Atext extends Component {
           width={this.props.width}
           position= {this.props.position}
           rotation={this.props.rotation}
+          color={this.props.color}
+          look-at="[camera]"
         />
     );
   }
