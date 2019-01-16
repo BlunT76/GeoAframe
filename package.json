@@ -9,10 +9,13 @@
     "aframe": "^0.8.2",
     "aframe-look-at-component": "^0.7.0",
     "ar.js": "^1.6.2",
+    "cordova-plugin-geolocation": "^4.0.1",
+    "cordova-plugin-magnetometer": "^1.0.0",
     "ecef-projector": "^1.0.1",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "react-webcam": "^1.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

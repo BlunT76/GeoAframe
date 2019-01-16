@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import projector from 'ecef-projector';
 import 'aframe-look-at-component';
 import Atext from './components/Atext'
-import Aimage from './components/Aimage'
-import Acursor from './components/Acursor'
+//import ArrText from './components/ArrText'
+//import Aimage from './components/Aimage'
+//import Acursor from './components/Acursor'
 //import AtextGeo from './components/AtextGeo'
 //import Accelerometer from './components/Accelerometer'
 import Camera from './components/Camera'
+import MediaCamera from './components/MediaCamera'
 
 
 class AFrameRenderer extends Component {
@@ -17,16 +19,25 @@ class AFrameRenderer extends Component {
     this.state = {
       inno_1: null,
       camPosition: [0,0,0],
+      poiList: []
     }
   }
 
   componentDidMount () {
-    
+    console.log(this.updateObjPosition(43.592941,1.447373))
   }
+
   getCamPosition = (e) => {
-      this.setState({
-        camPosition: e
-      })
+    this.setState({
+      camPosition: e
+    })
+  }
+
+  getPoiList = (e) => {
+    console.log("LISTPOI:",e)
+    this.setState({
+      poiList: e
+    })
   }
 
   getObjRotation = (e) => {
@@ -37,16 +48,33 @@ class AFrameRenderer extends Component {
     let prj = projector.project(lat, lng, 0)
     let ox = this.state.camPosition[0] - prj[0]
     let oz = this.state.camPosition[1] - prj[1]
-    return `${ox} 0 -${oz}`
+    if(oz > 0){
+      return `${ox} 0 -${oz}`
+    } else {
+      let oza = Math.abs(oz)
+      return `${ox} 0 ${oza}`
+    }
+    
   }
   
   render() {
     return (
-      <a-scene cursor="rayOrigin: mouse" style={sceneStyle}> 
-        <Camera getCamPosition={this.getCamPosition}/>
+      <a-scene ar cursor="rayOrigin: mouse" style={sceneStyle}> 
+        <MediaCamera />
+        <Camera getCamPosition={this.getCamPosition} getPoiList={this.getPoiList}/>
 
+        {/* Affichage des POI de openstreetmap */}
+        {this.state.poiList.map(e => 
+        <Atext 
+        key={e._id.toString()}
+        position={this.updateObjPosition(e.location.coordinates[1],e.location.coordinates[0])} 
+        value={e.name}
+        look-at="[camera]"
+        width="300"
+        color= "#F8F609" 
+        />)}
         
-
+        {/* Affichage de POI personnalisés */}
         <Atext position={this.updateObjPosition(43.050646,0.721948)} value="Fontaine" look-at="[camera]" width="15" color= "#0F25CE"/>
         <Atext position={this.updateObjPosition(43.050740,0.721487)} value="Eglise" look-at="[camera]" width="15" color= "#0F25CE"/>
         <Atext position={this.updateObjPosition(43.050305,0.722297)} value="Cour" look-at="[camera]" width="15" color= "#0F25CE"/>
@@ -55,15 +83,14 @@ class AFrameRenderer extends Component {
         <Atext position={this.updateObjPosition(43.593967,1.447539)} value="Dans la rue" look-at="[camera]" width="15" color= "#0F25CE"/>
         <Atext position={this.updateObjPosition(43.594340,1.447813)} value="Tramway Jardin Royal" look-at="[camera]" width="15" color= "#0F25CE"/>
 
-        <Aimage 
-          position={this.updateObjPosition(43.593547,1.448119)} 
+        <Atext position={this.updateObjPosition(43.592941,1.447373)} value="Fontaine" look-at="[camera]" width="15" color= "#0F25CE"/>
+        <Atext position={this.updateObjPosition(43.593932,1.448156)} value="LE VILLAGE" look-at="[camera]" width="50" color= "#0F25CE"/>
+        {/* <Aimage 
+          position={this.updateObjPosition(43.592941,1.447373)} 
           rotation="0 0 0" 
           width="10" 
           height="2.5"
-        />
-        
-       
-        {/* <a-camera id="camera" user-height="1.6" gps-position compass-rotation style={{position: 'fixed', top: '10px', width:'100%', height:'100%'}}></a-camera> */}
+        /> */}
       </a-scene>
       
     );
@@ -71,8 +98,10 @@ class AFrameRenderer extends Component {
 }
 
 const sceneStyle = {
-  // height: "100%",
-  // width: "100%"
+  height: "100%",
+  width: "100%",
+  zIndex: 1,
+  backgroundColor: "transparent"
 }
 AFrameRenderer.propTypes = {};
 AFrameRenderer.defaultProps = {};

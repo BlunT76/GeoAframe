@@ -6668,13 +6668,13 @@ var ARjs = ARjs || {}
 ARjs.SessionDebugUI = function(arSession, tangoPointCloud){
 	var trackingBackend = arSession.arContext.parameters.trackingBackend
 
-	this.domElement = document.createElement('div')
-	this.domElement.style.color = 'rgba(0,0,0,0.9)'
-	this.domElement.style.backgroundColor = 'rgba(127,127,127,0.5)'
-	this.domElement.style.display = 'inline-block'
-	this.domElement.style.padding = '0.5em'
-	this.domElement.style.margin = '0.5em'
-	this.domElement.style.textAlign = 'left'
+	// this.domElement = document.createElement('div')
+	// this.domElement.style.color = 'rgba(0,0,0,0.9)'
+	// this.domElement.style.backgroundColor = 'rgba(127,127,127,0.5)'
+	// this.domElement.style.display = 'inline-block'
+	// this.domElement.style.padding = '0.5em'
+	// this.domElement.style.margin = '0.5em'
+	// this.domElement.style.textAlign = 'left'
 
 	//////////////////////////////////////////////////////////////////////////////
 	//		add title
@@ -6690,23 +6690,23 @@ ARjs.SessionDebugUI = function(arSession, tangoPointCloud){
 	//		current-tracking-backend
 	//////////////////////////////////////////////////////////////////////////////
 
-	var domElement = document.createElement('span')
-	domElement.style.display = 'block'
-	this.domElement.appendChild(domElement)
-	domElement.innerHTML = '<b>trackingBackend</b> : ' +trackingBackend
+	// var domElement = document.createElement('span')
+	// domElement.style.display = 'block'
+	// this.domElement.appendChild(domElement)
+	// domElement.innerHTML = '<b>trackingBackend</b> : ' +trackingBackend
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//		augmented-websites
 	//////////////////////////////////////////////////////////////////////////////
 
-	if( ARjs.SessionDebugUI.AugmentedWebsiteURL ){
-		var domElement = document.createElement('a')
-		domElement.innerHTML = 'Share on augmented-websites'
-		domElement.style.display = 'block'
-		// domElement.setAttribute('target', '_blank')
-		domElement.href = ARjs.SessionDebugUI.AugmentedWebsiteURL + '?'+location.href
-		this.domElement.appendChild(domElement)						
-	}
+	// if( ARjs.SessionDebugUI.AugmentedWebsiteURL ){
+	// 	var domElement = document.createElement('a')
+	// 	domElement.innerHTML = 'Share on augmented-websites'
+	// 	domElement.style.display = 'block'
+	// 	// domElement.setAttribute('target', '_blank')
+	// 	domElement.href = ARjs.SessionDebugUI.AugmentedWebsiteURL + '?'+location.href
+	// 	this.domElement.appendChild(domElement)						
+	// }
 
 	//////////////////////////////////////////////////////////////////////////////
 	//		toggle-point-cloud
@@ -8773,8 +8773,8 @@ AFRAME.registerSystem('arjs', {
 				}
 
 				// create sessionDebugUI
-				var sessionDebugUI = new ARjs.SessionDebugUI(arSession)
-				containerElement.appendChild(sessionDebugUI.domElement)
+				//var sessionDebugUI = new ARjs.SessionDebugUI(arSession)
+				//containerElement.appendChild(sessionDebugUI.domElement)
 			}
 		})
 

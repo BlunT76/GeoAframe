@@ -1,25 +1,46 @@
 import React, {Component} from 'react';
+import projector from 'ecef-projector';
 import 'aframe-look-at-component';
 
-class Aimage extends Component {
+class Atext extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+     
+    }
+  }
+
+  componentDidMount () {
+    console.log("list: ",this.props.list)
+  }
+
+  componentDidUpdate () {
+    console.log("listUpdate: ",this.props.list)
+  }
+
+  updateObjPosition = (lat,lng) => {
+    let prj = projector.project(lat, lng, 0)
+    let ox = this.state.camPosition[0] - prj[0]
+    let oz = this.state.camPosition[1] - prj[1]
+    return `${ox} 0 ${oz}`
+  }
+
   render() {
     return (
-      <a-entity>
-        <a-image
-          src="./images/innoside.png"
+        <a-text
+          font="kelsonsans"
           value={this.props.value}
           width={this.props.width}
-          height={this.props.height}
           position= {this.props.position}
-          //rotation={this.props.rotation}
+          rotation={this.props.rotation}
+          color={this.props.color}
           look-at="[camera]"
         />
-      </a-entity>
     );
   }
 }
 
-export default Aimage;
+export default Atext;
 
 // Aframe position helper
 // x 	Negative X axis extends left. Positive X Axis extends right. 	

@@ -8,3 +8,6 @@ code {
     monospace;
 }
 
+.a-canvas {
+  z-index: 1;
+}
