@@ -1,0 +1,53 @@
+{/* Affichage de POI personnalisés */}
+          {/* <Atext handleOpenModal={this.handleOpenModal} position={this.updateObjPosition(43.050646,0.721948)} value="Fontaine" look-at="[camera]" width="15" color= "#0F25CE"/>
+          <Atext handleOpenModal={this.handleOpenModal} position={this.updateObjPosition(43.050740,0.721487)} value="Eglise" look-at="[camera]" width="15" color= "#0F25CE"/>
+          <Atext handleOpenModal={this.handleOpenModal} position={this.updateObjPosition(43.050305,0.722297)} value="Cour" look-at="[camera]" width="15" color= "#0F25CE"/>
+          <Atext handleOpenModal={this.handleOpenModal} position={this.updateObjPosition(43.050246,0.722458)} value="Voisine" look-at="[camera]" width="15" color= "#0F25CE"/>
+
+          <Atext handleOpenModal={this.handleOpenModal} position={this.updateObjPosition(43.593967,1.447539)} value="Dans la rue" look-at="[camera]" width="15" color= "#0F25CE"/>
+          <Atext handleOpenModal={this.handleOpenModal} position={this.updateObjPosition(43.594340,1.447813)} value="Tramway Jardin Royal" look-at="[camera]" width="15" color= "#0F25CE"/>
+
+          <Atext handleOpenModal={this.handleOpenModal} position={this.updateObjPosition(43.592941,1.447373)} value="Fonta" look-at="[camera]" width="15" color= "#0F25CE"/>
+          <Atext handleOpenModal={this.handleOpenModal} position={this.updateObjPosition(43.593932,1.448156)} value="LE VILLAGE" look-at="[camera]" width="50" color= "#0F25CE"/> */}
+          {/* <Aimage
+            position={this.updateObjPosition(43.594330, 1.450907)}
+            rotation="0 0 0" 
+            width="10" 
+            height="2.5"
+          /> */}
+
+// Aframe position helper
+// x 	Negative X axis extends left. Positive X Axis extends right. 	
+// y 	Negative Y axis extends down. Positive Y Axis extends up. 	
+// z 	Negative Z axis extends in.(devant la camera) Positive Z Axis extends out.(derriere la camera)
+
+// Aframe rotation helper
+// x 	Pitch, rotation about the X-axis. 	
+// y 	Yaw, rotation about the Y-axis. 	
+// z 	Roll, rotation about the Z-axis.
+
+//position gps proche simplon saint gaudens
+//43.109098, 0.726465 accueil cyberbase
+//43.109466, 0.726465 rue de l'avenir
+//43.109447, 0.726760 cour de derriere
+//43.109235, 0.726666
+//43.71606591298971, 1.334468722343445
+
+//passer le projet sous capacitor en apk mobile
+//utiliser un plugin magnetometer, integrer boussole sur camera, tester precision
+//serveur node, bdd qui stocke les poi(mongodb) une page pour ajouter des poi,
+//insomnia
+
+// const GeolocationOptions = {
+//   enableHighAccuracy:true,
+//   maximumAge:0,
+//   requireAltitude: false,
+//   timeout:5000
+// }
+
+// const sceneStyle = {
+//   height: "100%",
+//   width: "100%",
+//   zIndex: 1,
+//   backgroundColor: "transparent"
+// }

@@ -1,30 +1,48 @@
-import React, {Component} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import 'aframe-look-at-component';
 
-class Atext extends Component {
-  render() {
-    return (
-        <a-text
-          font="kelsonsans"
-          value={this.props.value}
-          width={this.props.width}
-          position= {this.props.position}
-          rotation={this.props.rotation}
-          color={this.props.color}
-          look-at="[camera]"
-        />
-    );
-  }
-}
+const Atext = (props) => {
+  const {
+    value,
+    width,
+    color,
+    position,
+    rotation,
+    handleOpenModal,
+  } = props;
+
+  const text = `value:${value}; width:${width}; align: center`;
+
+  return (
+    <a-entity
+      onClick={() => handleOpenModal(value)}
+      geometry="primitive: plane; height: 10; width: auto"
+      material={color}
+      text={`${text}`}
+      position={position}
+      rotation={rotation}
+      look-at="[camera]"
+    />
+  );
+};
+
+Atext.propTypes = {
+  value: PropTypes.string,
+  width: PropTypes.string,
+  color: PropTypes.string,
+  position: PropTypes.string,
+  rotation: PropTypes.string,
+  handleOpenModal: PropTypes.func,
+};
+
+Atext.defaultProps = {
+  value: '',
+  width: '0',
+  color: 'transparent',
+  position: '0 0 0',
+  rotation: '0 0 0',
+  handleOpenModal: () => {},
+};
 
 export default Atext;
-
-// Aframe position helper
-// x 	Negative X axis extends left. Positive X Axis extends right. 	
-// y 	Negative Y axis extends down. Positive Y Axis extends up. 	
-// z 	Negative Z axis extends in.(devant la camera) Positive Z Axis extends out.(derriere la camera)
-
-// Aframe rotation helper
-// x 	Pitch, rotation about the X-axis. 	
-// y 	Yaw, rotation about the Y-axis. 	
-// z 	Roll, rotation about the Z-axis.

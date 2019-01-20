@@ -1,14 +1,22 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { Plugins } from '@capacitor/core';
 import projector from 'ecef-projector';
 import 'aframe-look-at-component';
-import Atext from './components/Atext'
-//import ArrText from './components/ArrText'
-//import Aimage from './components/Aimage'
-//import Acursor from './components/Acursor'
-//import AtextGeo from './components/AtextGeo'
-//import Accelerometer from './components/Accelerometer'
-import Camera from './components/Camera'
-import MediaCamera from './components/MediaCamera'
+import config from './config';
+import { getPoi } from './utils/getPoi';
+import Atext from './components/Atext';
+
+// import Aimage from './components/Aimage';
+// import Acursor from './components/Acursor'
+import Acompass from './components/Acompass';
+// import Accelerometer from './components/Accelerometer'
+import Camera from './components/Camera';
+import MediaCamera from './components/MediaCamera';
+import Amodal from './components/Modal';
+
+const { Geolocation } = Plugins;
+const overpass = 'https://overpass-api.de/api/interpreter?data=[out:json];node[bus]';
+// const AFRAME = window.AFRAME
 
 
 class AFrameRenderer extends Component {
@@ -17,112 +25,227 @@ class AFrameRenderer extends Component {
     this.AframeDiv = React.createRef();
 
     this.state = {
-      inno_1: null,
-      camPosition: [0,0,0],
-      poiList: []
+      watchID: null,
+      camPosition: [0, 0, 0],
+      poiList: [],
+      overList: [],
+      // position: "0 0 0",
+      // positionArr:[],
+      // objPos: null,
+      // heading: 0,
+      lat: null,
+      lng: null,
+      // bar: null,
+      showModal: false,
+      msg: '',
+    };
+  }
+
+  componentDidMount() {
+    this.updateCamPosition();
+  }
+
+  componentWillUnmount() {
+    const { watchID } = this.state;
+    navigator.geolocation.clearWatch(watchID);
+    Geolocation.clearWatch(watchID);
+  }
+
+  handleOpenModal = (e) => {
+    this.setState({ showModal: true, msg: e });
+  }
+
+  handleCloseModal = () => {
+    this.setState({ showModal: false });
+  }
+
+  updateObjPosition = (lat, lng) => {
+    const { camPosition } = this.state;
+    const prj = projector.project(lat, lng, 0);
+    const ox = camPosition[0] - prj[0];
+    const oz = camPosition[1] - prj[1];
+    if (oz > 0) {
+      return `${ox} 0 -${oz}`;
+    }
+    const oza = Math.abs(oz);
+    return `${ox} 0 ${oza}`;
+  }
+
+  updateCompassPosition = (lat, lng) => {
+    const { camPosition } = this.state;
+    const prj = projector.project(Number(lat), Number(lng), 0);
+    const ox = camPosition[0] - prj[0];
+    const oz = camPosition[1] - prj[1];
+    if (Number.isNaN(ox) || Number.isNaN(oz)) {
+      return null;
+    }
+    if (oz > 0) {
+      return `${ox} -5 -${oz}`;
+    }
+    const oza = Math.abs(oz);
+    return `${ox} -5 ${oza}`;
+  }
+
+  // launch the watchPosition function (dans un setState pour pouvoir le stopper
+  // dans le unmount, je sais pas si c'est bien de faire ca)
+  updateCamPosition = () => {
+    let isList = false;
+    const GeolocationOptions = {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      requireAltitude: false,
+      timeout: 5000,
+    };
+    this.setState({
+      watchID: Geolocation.watchPosition({ GeolocationOptions }, (position, error) => {
+        if (!error) {
+          console.log(position.coords);
+          const prj = projector.project(position.coords.latitude, position.coords.longitude, 0);
+          this.setState({
+            camPosition: `${prj[0]} 0 -${prj[1]}`,
+            lat: position.coords.latitude.toFixed(6),
+            lng: position.coords.longitude.toFixed(6),
+          //  heading: position.coords.heading
+          });
+          // provisoire, sert a effectuer seulement une requete overpass apres avoir obtenu
+          // la 1ere position gps de l'utilisateur
+          // this.getCamPosition(prj)
+          this.setState({
+            camPosition: prj,
+          });
+          if (isList === false) {
+            isList = true;
+            // this.getPoiInnoside();
+            this.getPoiOverpass();
+            getPoi(1, 1).then((response) => {
+              console.log(response);
+              this.setState({ poiList: response });
+            });
+          }
+        } else {
+          console.log({ error });
+        }
+      }),
+    });
+  }
+
+
+  // _onSuccess = (e) => {
+  //   console.log(e)
+  // }
+  // }
+  // affiche les POI de OVERPASS
+
+  getPoiOverpass = () => {
+    // let that = this.props
+    // requete de poi sur overpass api
+    const { lat, lng } = this.state;
+    if ((lat !== null) && (lng !== null)) {
+      // prettier-ignore
+      fetch(
+        `${overpass}(around:500.0,${lat},${lng});out;`,
+        {
+          method: 'GET',
+        },
+      )
+        .then(response => response.json())
+        .then((responseJson) => {
+          if (responseJson.elements.length !== 0) {
+            this.setState({ overList: responseJson.elements });
+          } else {
+            console.log('rien a proximité');
+          }
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
     }
   }
 
-  componentDidMount () {
-    console.log(this.updateObjPosition(43.592941,1.447373))
-  }
+  // AFFICHE LES POI DE INNOSIDE
+  getPoiInnoside = () => {
+    // requete de poi sur overpass api
+    const { lat, lng } = this.state;
+    if ((lat != null) && (lng != null)) {
+      // console.log(config.url);
 
-  getCamPosition = (e) => {
-    this.setState({
-      camPosition: e
-    })
-  }
-
-  getPoiList = (e) => {
-    console.log("LISTPOI:",e)
-    this.setState({
-      poiList: e
-    })
-  }
-
-  getObjRotation = (e) => {
-    //Math.atan2(Math.sin(Math.radians(angledest) - Math.radians(angleplayer)), Math.cos(Math.radians(angledest) - Math.radians(angleplayer)))
-  }
-
-  updateObjPosition = (lat,lng) => {
-    let prj = projector.project(lat, lng, 0)
-    let ox = this.state.camPosition[0] - prj[0]
-    let oz = this.state.camPosition[1] - prj[1]
-    if(oz > 0){
-      return `${ox} 0 -${oz}`
-    } else {
-      let oza = Math.abs(oz)
-      return `${ox} 0 ${oza}`
+      fetch(
+        `${config.url}`,
+        {
+          method: 'GET',
+        },
+      )
+        .catch((error) => {
+          console.log('error1', error);
+        })
+        .then(response => response.json())
+        .then((responseJson) => {
+          console.log(responseJson);
+          if (responseJson.payload.geofences.length !== 0) {
+            this.setState({ poiList: responseJson.payload.geofences });
+          } else {
+            console.log('rien a proximité');
+          }
+        })
+        .catch((error) => {
+          console.log('error', error);
+        });
     }
-    
   }
-  
+
   render() {
+    const {
+      poiList, overList, lat, lng, msg, showModal,
+    } = this.state;
+
+    const sceneStyle = {
+      height: '100%',
+      width: '100%',
+      zIndex: 1,
+      backgroundColor: 'transparent',
+    };
     return (
-      <a-scene ar cursor="rayOrigin: mouse" style={sceneStyle}> 
-        <MediaCamera />
-        <Camera getCamPosition={this.getCamPosition} getPoiList={this.getPoiList}/>
+      <div>
+        <a-scene cursor="rayOrigin: mouse" light="defaultLightsEnabled: false" style={sceneStyle}>
+          <MediaCamera />
+          <Camera lat={lat} lng={lng} />
 
-        {/* Affichage des POI de openstreetmap */}
-        {this.state.poiList.map(e => 
-        <Atext 
-        key={e._id.toString()}
-        position={this.updateObjPosition(e.location.coordinates[1],e.location.coordinates[0])} 
-        value={e.name}
-        look-at="[camera]"
-        width="300"
-        color= "#F8F609" 
-        />)}
-        
-        {/* Affichage de POI personnalisés */}
-        <Atext position={this.updateObjPosition(43.050646,0.721948)} value="Fontaine" look-at="[camera]" width="15" color= "#0F25CE"/>
-        <Atext position={this.updateObjPosition(43.050740,0.721487)} value="Eglise" look-at="[camera]" width="15" color= "#0F25CE"/>
-        <Atext position={this.updateObjPosition(43.050305,0.722297)} value="Cour" look-at="[camera]" width="15" color= "#0F25CE"/>
-        <Atext position={this.updateObjPosition(43.050246,0.722458)} value="Voisine" look-at="[camera]" width="15" color= "#0F25CE"/>
+          {/* Affichage des POI de openstreetmap */}
 
-        <Atext position={this.updateObjPosition(43.593967,1.447539)} value="Dans la rue" look-at="[camera]" width="15" color= "#0F25CE"/>
-        <Atext position={this.updateObjPosition(43.594340,1.447813)} value="Tramway Jardin Royal" look-at="[camera]" width="15" color= "#0F25CE"/>
+          {poiList.map(e => (
+            <Atext
+              key={e._id.toString()}
+              position={
+                this.updateObjPosition(e.location.coordinates[1], e.location.coordinates[0])
+              }
+              handleOpenModal={this.handleOpenModal}
+              value={e.name}
+              look-at="[camera]"
+              width="30"
+              color="color: #953292"
+            />
+          ))}
 
-        <Atext position={this.updateObjPosition(43.592941,1.447373)} value="Fontaine" look-at="[camera]" width="15" color= "#0F25CE"/>
-        <Atext position={this.updateObjPosition(43.593932,1.448156)} value="LE VILLAGE" look-at="[camera]" width="50" color= "#0F25CE"/>
-        {/* <Aimage 
-          position={this.updateObjPosition(43.592941,1.447373)} 
-          rotation="0 0 0" 
-          width="10" 
-          height="2.5"
-        /> */}
-      </a-scene>
-      
+          {overList.map(e => (
+            <Atext
+              key={e.id.toString()}
+              position={this.updateObjPosition(e.lat, e.lon)}
+              handleOpenModal={this.handleOpenModal}
+              value={e.tags.name}
+              look-at="[camera]"
+              width="30"
+              color="color: #FF6600"
+            />
+          ))}
+          <Acompass value="N" position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} rotation="-90 90 0" />
+          <Acompass value="S" position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} rotation="-90 90 -180" />
+          <Acompass value="E" position={this.updateCompassPosition(Number(lat), (Number(lng) - 0.0002), 0)} rotation="-90 90 -90" />
+          <Acompass value="O" position={this.updateCompassPosition(Number(lat), (Number(lng) + 0.0002), 0)} rotation="-90 90 90" />
+        </a-scene>
+        <Amodal msg={msg} open={showModal} handleCloseModal={this.handleCloseModal} />
+      </div>
     );
   }
 }
 
-const sceneStyle = {
-  height: "100%",
-  width: "100%",
-  zIndex: 1,
-  backgroundColor: "transparent"
-}
-AFrameRenderer.propTypes = {};
-AFrameRenderer.defaultProps = {};
-
-
-
 export default AFrameRenderer;
-
-// Aframe position helper
-// x 	Negative X axis extends left. Positive X Axis extends right. 	
-// y 	Negative Y axis extends down. Positive Y Axis extends up. 	
-// z 	Negative Z axis extends in.(devant la camera) Positive Z Axis extends out.(derriere la camera)
-
-// Aframe rotation helper
-// x 	Pitch, rotation about the X-axis. 	
-// y 	Yaw, rotation about the Y-axis. 	
-// z 	Roll, rotation about the Z-axis.
-
-//position gps proche simplon saint gaudens
-//43.109098, 0.726465 accueil cyberbase
-//43.109466, 0.726465 rue de l'avenir
-//43.109447, 0.726760 cour de derriere
-//43.109235, 0.726666
-//43.71606591298971, 1.334468722343445
