@@ -1,0 +1,6 @@
+const config = {
+  url: 'innoside qualif url/geofence',
+  overpass: 'https://overpass-api.de/api/interpreter?data=[out:json];node[bus]',
+};
+
+export default config;

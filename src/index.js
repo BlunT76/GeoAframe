@@ -4,7 +4,7 @@ import './index.css';
 // import * as serviceWorker from './serviceWorker';
 import AFrameRenderer from './App';
 
-console.assert = (test, value) => { !test && console.trace('assert failed', value); };
+// console.assert = (test, value) => { !test && console.trace('assert failed', value); };
 ReactDOM.render(
 
   <AFrameRenderer />,

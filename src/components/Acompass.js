@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import 'aframe-look-at-component';
 
-const Acompass = (props) =>{
+const Acompass = (props) => {
   const { value, position, rotation } = props;
   return (
     <a-text value={value} position={position} width="50" rotation={rotation} />

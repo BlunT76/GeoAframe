@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import 'aframe-look-at-component';
 
 class Camera extends Component {
@@ -8,25 +9,37 @@ class Camera extends Component {
   }
 
   render() {
+    const { roty } = this.props;
+    // const { roty } = this.props;
+    const rotation = `0 ${roty} 0`;
+    // console.log('ROTATION: ', rotation);
     return (
       <a-entity>
         <a-entity
           id="camera"
           ref={this.myRef}
           camera="active: true"
-          look-controls
+          // look-controls
           wasd-controls
           listener
           near="10"
           far="10000"
           userHeight="1.6"
-          rotation="0 0 0"
+          rotation={rotation}
         >
-          <a-cursor />
+          {/* <a-cursor /> */}
         </a-entity>
       </a-entity>
     );
   }
 }
+
+Camera.propTypes = {
+  roty: PropTypes.number,
+};
+
+Camera.defaultProps = {
+  roty: 0,
+};
 
 export default Camera;

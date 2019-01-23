@@ -3,5 +3,6 @@
   "appName": "test_react_capacitor",
   "bundledWebRuntime": false,
   "webDir": "build",
-  "linuxAndroidStudioPath": "/home/philippe/android-studio/bin/studio.sh"
+  "linuxAndroidStudioPath": "/home/philippe/android-studio/bin/studio.sh",
+  "webContentsDebuggingEnabled": true
 }

@@ -8,6 +8,7 @@ const videoContainer = {
   width: '100%',
   zIndex: '0',
 };
+
 class MediaCamera extends Component {
   render() {
     const videoConstraints = {
