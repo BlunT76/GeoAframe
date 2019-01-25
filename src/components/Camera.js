@@ -19,7 +19,7 @@ class Camera extends Component {
           id="camera"
           ref={this.myRef}
           camera="active: true"
-          // look-controls
+          look-controls
           wasd-controls
           listener
           near="10"

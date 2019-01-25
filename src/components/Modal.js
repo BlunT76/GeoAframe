@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-responsive-modal';
+import styles from '../index.css';
 
 const Amodal = (props) => {
   const {
@@ -12,7 +13,16 @@ const Amodal = (props) => {
 
   return (
     <div>
-      <Modal poiInfo={poiInfo} open={open} onClose={() => handleCloseModal()} center>
+      <Modal
+        poiInfo={poiInfo}
+        open={open}
+        onClose={() => handleCloseModal()}
+        center
+        classNames={{
+          //overlay: styles.overlay,
+          modal: { background: 'red' },
+        }}
+      >
         <h2>{msg}</h2>
       </Modal>
     </div>

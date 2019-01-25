@@ -127,7 +127,7 @@ class AFrameRenderer extends Component {
     this.setState({
       watchID: navigator.geolocation.watchPosition((position) => {
         if (position) {
-          // console.log(position.coords);
+          console.log(position.coords.latitude, position.coords.longitude);
 
           const prj = projector.project(position.coords.latitude, position.coords.longitude, 0);
           if (prjPrevious === null) {
@@ -147,30 +147,38 @@ class AFrameRenderer extends Component {
           if (isList === false) {
             isList = true;
 
-            getPoiInnoside(1, 1).then((response) => {
-              // console.log({ response });
-              this.setState({ poiList: response });
-            });
+            // getPoiInnoside(1, 1).then((response) => {
+            //   // console.log({ response });
+            //   this.setState({ poiList: response });
+            // });
 
             getPoiOverpass(position.coords.latitude, position.coords.longitude).then((response) => {
               console.log({ response });
               this.setState({ overList: response });
-              console.log(position.coords.latitude, position.coords.longitude, response[0].lat, response[0].lon);
-              navigate(position.coords.latitude, position.coords.longitude, response[4].lat, response[4].lon).then((res) => {
-                // console.log(res);
-                this.setState({ lines: res.features[0].geometry.coordinates }, () => this.drawLines());
-              });
+
+              // if(position.coords.latitude !==)
+              navigate(
+                position.coords.latitude,
+                position.coords.longitude,
+                response[7].lat,
+                response[7].lon,
+              )
+                .then((res) => {
+                  console.log(res);
+                  this.setState({ lines: res.features[0].geometry.coordinates }, () => {
+                    this.drawLines();
+                  });
+                });
             });
           }
-        } else {
-          // console.log({ error });
         }
       }, (error) => {
         console.log(error);
+        isList = false;
       }, {
         enableHighAccuracy: true,
         maximumAge: 0,
-        timeout: 500,
+        timeout: 2000,
       }),
     });
   }
@@ -194,15 +202,15 @@ class AFrameRenderer extends Component {
       const ozstart = camPosition[1] - prjstart[1];
       const oxend = camPosition[0] - prjend[0];
       const ozend = camPosition[1] - prjend[1];
-      console.log({ camPosition });
-      console.log({ prjstart });
-      console.log({ prjend });
-      console.log(oxstart, ozstart, oxend, ozend);
+      // console.log({ camPosition });
+      // console.log({ prjstart });
+      // console.log({ prjend });
+      // console.log(oxstart, ozstart, oxend, ozend);
       if (Number.isNaN(oxstart) || Number.isNaN(ozstart) || Number.isNaN(oxend) || Number.isNaN(ozend)) {
         return null;
       }
       if (ozstart > 0) {
-        result.push(`start: ${oxstart} -10 ${ozstart} ; end: ${oxend} -10 ${ozend}; color: yellow`);
+        result.push(`start: ${oxstart} -10 -${ozstart} ; end: ${oxend} -10 -${ozend}; color: yellow`);
       } else {
         const ozstarta = Math.abs(ozstart);
         const ozenda = Math.abs(ozend);
@@ -220,7 +228,7 @@ class AFrameRenderer extends Component {
     const {
       poiList, overList, lat, lng, msg, showModal, orientation, linesPos,
     } = this.state;
-    console.log(linesPos);
+    // console.log(linesPos);
     const sceneStyle = {
       height: '100%',
       width: '100%',
@@ -234,16 +242,19 @@ class AFrameRenderer extends Component {
           <Camera lat={lat} lng={lng} roty={orientation} />
           <MediaCamera />
           {/* Affichage des POI de openstreetmap */}
-
+          <a-entity
+            material="color: #4BB14F"
+            position={this.updateObjPosition(lat, lng)}
+            geometry="primitive: cone; segmentsRadial: 4; radiusBottom: 0.01; radiusTop: 0.5; height: 1"
+          />
           {linesPos && linesPos.map((e, i) => (
             <a-entity
               line={e}
+              key={`line${i}`}
               // line2="start: 0, 1, 0; end: 2 0 -5; color: yellow"
             />
           ))
           }
-
-
 
           {poiList && poiList.map(e => (
             <Atext
@@ -267,15 +278,15 @@ class AFrameRenderer extends Component {
                 handleOpenModal={this.handleOpenModal}
                 value={e.tags.name}
                 look-at="[camera]"
-                width="30"
+                width="10"
                 color="color: #FF6600"
               />
             )
           ))}
-          <Acompass value="N" position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} rotation="-90 90 0" />
-          <Acompass value="S" position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} rotation="-90 90 -180" />
-          <Acompass value="E" position={this.updateCompassPosition(Number(lat), (Number(lng) - 0.0002), 0)} rotation="-90 90 -90" />
-          <Acompass value="O" position={this.updateCompassPosition(Number(lat), (Number(lng) + 0.0002), 0)} rotation="-90 90 90" />
+          <Acompass value="N" position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} rotation="-90 90 -180" />
+          <Acompass value="S" position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} rotation="-90 90 0" />
+          <Acompass value="E" position={this.updateCompassPosition(Number(lat), (Number(lng) + 0.0002), 0)} rotation="-90 90 90" />
+          <Acompass value="O" position={this.updateCompassPosition(Number(lat), (Number(lng) - 0.0002), 0)} rotation="-90 90 -90" />
         </a-scene>
         <Amodal msg={msg} open={showModal} handleCloseModal={this.handleCloseModal} />
       </div>
