@@ -2,12 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 // import * as serviceWorker from './serviceWorker';
-import AFrameRenderer from './App';
+import App from './App';
 
 // console.assert = (test, value) => { !test && console.trace('assert failed', value); };
 ReactDOM.render(
 
-  <AFrameRenderer />,
+  <App />,
   document.getElementById('root'),
 );
 

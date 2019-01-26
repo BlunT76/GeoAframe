@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-// import { Plugins } from '@capacitor/core';
 import projector from 'ecef-projector';
 import 'aframe-look-at-component';
 import { getPoiInnoside, getPoiOverpass, navigate } from './utils/getPoi';
+import { drawLines } from './utils/drawLines';
 import Atext from './components/Atext';
 
 // import Aimage from './components/Aimage';
-// import Acursor from './components/Acursor'
 import Acompass from './components/Acompass';
 // import Accelerometer from './components/Accelerometer'
 import Camera from './components/Camera';
@@ -18,7 +17,7 @@ import Amodal from './components/Modal';
 // const AFRAME = window.AFRAME
 
 
-class AFrameRenderer extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.AframeDiv = React.createRef();
@@ -33,10 +32,11 @@ class AFrameRenderer extends Component {
       orientationPrevious: null,
       lat: null,
       lng: null,
-      lines: null,
+      // lines: null,
       linesPos: null,
       showModal: false,
       msg: '',
+      iNav: null,
     };
   }
 
@@ -78,8 +78,8 @@ class AFrameRenderer extends Component {
     });
   }
 
-  handleOpenModal = (e) => {
-    this.setState({ showModal: true, msg: e });
+  handleOpenModal = (e, i) => {
+    this.setState({ showModal: true, msg: e, iNav: i });
   }
 
   handleCloseModal = () => {
@@ -116,18 +116,13 @@ class AFrameRenderer extends Component {
   // launch the watchPosition function (dans un setState pour pouvoir le stopper
   // dans le unmount, je sais pas si c'est bien de faire ca)
   updateCamPosition = () => {
-    const { prjPrevious, lat, lng } = this.state;
+    const { prjPrevious } = this.state;
     let isList = false;
-    // const GeolocationOptions = {
-    //   enableHighAccuracy: true,
-    //   maximumAge: 0,
-    //   timeout: 500,
-    // };
 
     this.setState({
       watchID: navigator.geolocation.watchPosition((position) => {
         if (position) {
-          console.log(position.coords.latitude, position.coords.longitude);
+          // console.log(position.coords.latitude, position.coords.longitude);
 
           const prj = projector.project(position.coords.latitude, position.coords.longitude, 0);
           if (prjPrevious === null) {
@@ -155,20 +150,6 @@ class AFrameRenderer extends Component {
             getPoiOverpass(position.coords.latitude, position.coords.longitude).then((response) => {
               console.log({ response });
               this.setState({ overList: response });
-
-              // if(position.coords.latitude !==)
-              navigate(
-                position.coords.latitude,
-                position.coords.longitude,
-                response[7].lat,
-                response[7].lon,
-              )
-                .then((res) => {
-                  console.log(res);
-                  this.setState({ lines: res.features[0].geometry.coordinates }, () => {
-                    this.drawLines();
-                  });
-                });
             });
           }
         }
@@ -183,50 +164,33 @@ class AFrameRenderer extends Component {
     });
   }
 
-  drawLines = () => {
-    const { lines, camPosition } = this.state;
-    // console.table(lines);
-    let result = [];
-    let prjstart;
-    let prjend;
-    /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-    for (let i = 0; i < lines.length; i++) {
-      // console.log(lines[i + 1][0]);
-      if (lines[i + 1] !== undefined) {
-        prjstart = projector.project(Number(lines[i][1]), Number(lines[i][0]), 0);
-        // console.log(i, prjstart);
-        prjend = projector.project(Number(lines[i + 1][1]), Number(lines[i + 1][0]), 0);
-        // console.log(i + 1, prjend);
-      }
-      const oxstart = camPosition[0] - prjstart[0];
-      const ozstart = camPosition[1] - prjstart[1];
-      const oxend = camPosition[0] - prjend[0];
-      const ozend = camPosition[1] - prjend[1];
-      // console.log({ camPosition });
-      // console.log({ prjstart });
-      // console.log({ prjend });
-      // console.log(oxstart, ozstart, oxend, ozend);
-      if (Number.isNaN(oxstart) || Number.isNaN(ozstart) || Number.isNaN(oxend) || Number.isNaN(ozend)) {
-        return null;
-      }
-      if (ozstart > 0) {
-        result.push(`start: ${oxstart} -10 -${ozstart} ; end: ${oxend} -10 -${ozend}; color: yellow`);
-      } else {
-        const ozstarta = Math.abs(ozstart);
-        const ozenda = Math.abs(ozend);
-        result.push(`start: ${oxstart} -10 ${ozstarta} ; end: ${oxend} -10 ${ozenda}; color: yellow`);
-      }
-    }
-    this.setState({ linesPos: result });
-    // console.table(result);
-    return null;
-  }
+  handleNavigate = (value, id) => {
+    const {
+      lat, lng, overList, camPosition,
+    } = this.state;
 
-  // line2="start: 0, 1, 0; end: 2 0 -5; color: yellow"
+    console.log('HANDLENAVIGATE: ', value, id, overList);
+    navigate(
+      lat,
+      lng,
+      overList[id].lat,
+      overList[id].lon,
+    )
+      .then((res) => {
+        console.log(res.features[0].geometry.coordinates);
+        const result = drawLines(
+          res.features[0].geometry.coordinates,
+          overList[id].lat,
+          overList[id].lon,
+          camPosition,
+        );
+        this.setState({ linesPos: result });
+      });
+  }
 
   render() {
     const {
-      poiList, overList, lat, lng, msg, showModal, orientation, linesPos,
+      poiList, overList, lat, lng, msg, showModal, orientation, linesPos, iNav,
     } = this.state;
     // console.log(linesPos);
     const sceneStyle = {
@@ -245,20 +209,21 @@ class AFrameRenderer extends Component {
           <a-entity
             material="color: #4BB14F"
             position={this.updateObjPosition(lat, lng)}
-            geometry="primitive: cone; segmentsRadial: 4; radiusBottom: 0.01; radiusTop: 0.5; height: 1"
+            geometry="primitive: cone; segmentsRadial: 4; radiusBottom: 0.01; radiusTop: 0.5; height: 2"
           />
+
           {linesPos && linesPos.map((e, i) => (
             <a-entity
               line={e}
               key={`line${i}`}
-              // line2="start: 0, 1, 0; end: 2 0 -5; color: yellow"
             />
           ))
           }
 
-          {poiList && poiList.map(e => (
+          {poiList && poiList.map((e, i) => (
             <Atext
               key={e._id.toString()}
+              id={i}
               position={
                 this.updateObjPosition(e.location.coordinates[1], e.location.coordinates[0])
               }
@@ -270,28 +235,37 @@ class AFrameRenderer extends Component {
             />
           ))}
 
-          {overList && overList.map(e => (
-            (e.tags.name) && (
+          {overList && overList.map((e, i) => (
+            (e.tags.name || e.tags.amenity) && (
               <Atext
                 key={e.id.toString()}
+                id={i}
                 position={this.updateObjPosition(e.lat, e.lon)}
                 handleOpenModal={this.handleOpenModal}
-                value={e.tags.name}
+                value={e.tags.name || e.tags.amenity}
                 look-at="[camera]"
-                width="10"
+                width="30"
                 color="color: #FF6600"
               />
             )
           ))}
+
           <Acompass value="N" position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} rotation="-90 90 -180" />
           <Acompass value="S" position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} rotation="-90 90 0" />
           <Acompass value="E" position={this.updateCompassPosition(Number(lat), (Number(lng) + 0.0002), 0)} rotation="-90 90 90" />
           <Acompass value="O" position={this.updateCompassPosition(Number(lat), (Number(lng) - 0.0002), 0)} rotation="-90 90 -90" />
         </a-scene>
-        <Amodal msg={msg} open={showModal} handleCloseModal={this.handleCloseModal} />
+
+        <Amodal
+          msg={msg}
+          id={iNav}
+          open={showModal}
+          handleCloseModal={this.handleCloseModal}
+          handleNavigate={this.handleNavigate}
+        />
       </div>
     );
   }
 }
 
-export default AFrameRenderer;
+export default App;

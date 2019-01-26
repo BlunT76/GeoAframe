@@ -10,9 +10,7 @@ class Camera extends Component {
 
   render() {
     const { roty } = this.props;
-    // const { roty } = this.props;
     const rotation = `0 ${roty} 0`;
-    // console.log('ROTATION: ', rotation);
     return (
       <a-entity>
         <a-entity
@@ -21,9 +19,9 @@ class Camera extends Component {
           camera="active: true"
           look-controls
           wasd-controls
-          listener
-          near="10"
-          far="10000"
+          // listener
+          near="0.005"
+          far="1000"
           userHeight="1.6"
           rotation={rotation}
         >

@@ -1,3 +1,19 @@
+#root {
+  display:block;
+}
+#warning-message {
+  display:block;
+  height: 100vh;
+  color:white;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+}
+h1 {
+  font-weight: 400;
+}
+img {
+  margin-top: 2%;
+}
 .overlay {
   background: rgba(0, 0, 0, 0.75);
   display: flex;

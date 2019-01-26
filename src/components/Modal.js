@@ -9,6 +9,8 @@ const Amodal = (props) => {
     open,
     handleCloseModal,
     msg,
+    handleNavigate,
+    id,
   } = props;
 
   return (
@@ -19,11 +21,12 @@ const Amodal = (props) => {
         onClose={() => handleCloseModal()}
         center
         classNames={{
-          //overlay: styles.overlay,
+          // overlay: styles.overlay,
           modal: { background: 'red' },
         }}
       >
         <h2>{msg}</h2>
+        <button type="button" onClick={() => handleNavigate(msg, id)}>Navigate</button>
       </Modal>
     </div>
   );
@@ -34,6 +37,8 @@ Amodal.propTypes = {
   open: PropTypes.bool,
   handleCloseModal: PropTypes.func,
   msg: PropTypes.string,
+  handleNavigate: PropTypes.func,
+  id: PropTypes.number,
 };
 
 Amodal.defaultProps = {
@@ -41,6 +46,8 @@ Amodal.defaultProps = {
   open: '0 0 0',
   handleCloseModal: () => {},
   msg: '',
+  handleNavigate: () => {},
+  id: 0,
 };
 
 export default Amodal;

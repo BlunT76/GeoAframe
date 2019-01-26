@@ -10,6 +10,7 @@ const Atext = (props) => {
     position,
     rotation,
     handleOpenModal,
+    id,
   } = props;
 
   const cone = position.split(' ');
@@ -18,7 +19,7 @@ const Atext = (props) => {
   return (
     <a-entity>
       <a-entity
-        onClick={() => handleOpenModal(value)}
+        onClick={() => handleOpenModal(value, id)}
         geometry={`primitive: plane; height: 1; width: ${width / 2};`}
         material={color}
         text={`value:${value}; width: ${width}; height: 1;  align: center;`}
@@ -51,6 +52,7 @@ Atext.propTypes = {
   position: PropTypes.string,
   rotation: PropTypes.string,
   handleOpenModal: PropTypes.func,
+  id: PropTypes.string,
 };
 
 Atext.defaultProps = {
@@ -60,6 +62,7 @@ Atext.defaultProps = {
   position: '0 0 0',
   rotation: '0 0 0',
   handleOpenModal: () => {},
+  id: '',
 };
 
 export default Atext;
