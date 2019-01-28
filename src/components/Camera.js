@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import 'aframe-look-at-component';
 
 class Camera extends Component {
   constructor(props) {
@@ -9,7 +8,9 @@ class Camera extends Component {
   }
 
   render() {
-    const { roty } = this.props;
+    const { roty, control } = this.props;
+    console.log({ control });
+
     const rotation = `0 ${roty - 180} 0`;
     return (
       <a-entity>
@@ -17,7 +18,7 @@ class Camera extends Component {
           id="camera"
           ref={this.myRef}
           camera="active: true"
-          // look-controls
+          look-controls={`enabled: ${control}`}
           wasd-controls
           // listener
           near="0.005"
@@ -34,10 +35,12 @@ class Camera extends Component {
 
 Camera.propTypes = {
   roty: PropTypes.number,
+  control: PropTypes.bool,
 };
 
 Camera.defaultProps = {
   roty: 0,
+  control: true,
 };
 
 export default Camera;

@@ -14,7 +14,7 @@ class MediaCamera extends Component {
     const videoConstraints = {
       facingMode: 'environment',
     };
-    console.log('Width: ', window.innerWidth, 'height: ', window.innerHeight);
+
     return (
       <Webcam
         style={videoContainer}
@@ -25,7 +25,7 @@ class MediaCamera extends Component {
         ref={node => (this.webcam = node)}
       />
     );
-  };
+  }
 }
 
 export default MediaCamera;

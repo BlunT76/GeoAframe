@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import PropTypes from 'prop-types';
 
 class Menu extends Component {
   constructor(props) {
@@ -9,16 +9,16 @@ class Menu extends Component {
     this.state = {
       checkInnoside: false,
       checkOverpass: false,
-      around: 1000,
+      around: 300,
       checkPerso: false,
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
-    const target = event.target;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const { name } = target;
 
     this.setState({
       [name]: value,
@@ -41,25 +41,57 @@ class Menu extends Component {
             <hr style={{ backgroundColor: 'white' }} className="" />
             <h1 className="text-center purple">Choix des POI</h1>
 
-            <form onSubmit={() => handleDataMenu([checkInnoside, checkOverpass, around, checkPerso])}>
+            <form
+              onSubmit={() => handleDataMenu([checkInnoside, checkOverpass, around, checkPerso])}
+            >
               <div className="form-group form-check ">
-                <input checked={checkInnoside} onChange={this.handleChange} name="checkInnoside" type="checkbox" className="form-check-input" id="checkInnoside" />
+                <input
+                  checked={checkInnoside}
+                  onChange={this.handleChange}
+                  name="checkInnoside"
+                  type="checkbox"
+                  className="form-check-input"
+                  id="checkInnoside"
+                />
                 <label className="form-check-label" htmlFor="checkInnoside">Poi Innoside</label>
               </div>
 
               <div className="form-inline mt-3">
                 <div className="form-group form-check">
-                  <input checked={checkOverpass} onChange={this.handleChange} name="checkOverpass" type="checkbox" className="form-check-input" id="checkOverpass" />
+                  <input
+                    checked={checkOverpass}
+                    onChange={this.handleChange}
+                    name="checkOverpass"
+                    type="checkbox"
+                    className="form-check-input"
+                    id="checkOverpass"
+                  />
                   <label className="form-check-label" htmlFor="checkOverpass">Poi autour de moi</label>
                 </div>
                 <div className="form-group">
-                  <input value={around} onChange={this.handleChange} name="around" type="number" className="form-control" id="distMax" placeholder="Distance max" />
+                  <input
+                    value={around}
+                    onChange={this.handleChange}
+                    name="around"
+                    type="number"
+                    className="form-control"
+                    id="distMax"
+                    placeholder="Distance max"
+                  />
                   <label htmlFor="distMax">Distance maximum en mètres</label>
                 </div>
               </div>
 
-              <div className="form-group form-check">
-                <input checked={checkPerso} onChange={this.handleChange} name="checkPerso" type="checkbox" className="form-check-input" id="checkPerso" />
+              <div className="form-group form-check mt-3">
+                <input
+                  checked={checkPerso}
+                  onChange={this.handleChange}
+                  name="checkPerso"
+                  type="checkbox"
+                  className="form-check-input"
+                  id="checkPerso"
+                  disabled
+                />
                 <label className="form-check-label" htmlFor="checkPerso">Poi personnalisé</label>
               </div>
 
@@ -73,4 +105,11 @@ class Menu extends Component {
   }
 }
 
+Menu.propTypes = {
+  handleDataMenu: PropTypes.func,
+};
+
+Menu.defaultProps = {
+  handleDataMenu: () => {},
+};
 export default Menu;

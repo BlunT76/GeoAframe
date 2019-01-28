@@ -12,8 +12,6 @@ import Camera from './components/Camera';
 import MediaCamera from './components/MediaCamera';
 import Amodal from './components/Modal';
 
-// const { Geolocation } = Plugins;
-
 // const AFRAME = window.AFRAME
 
 
@@ -37,14 +35,16 @@ class App extends Component {
       msg: '',
       iNav: null,
       list: null,
+      control: true,
     };
   }
 
   componentDidMount() {
     this.updateCamPosition();
-    if (window.DeviceMotionEvent === undefined) {
+    if (window.DeviceOrientationEvent === undefined) {
       // No accelerometer is present. Use buttons.
-      alert('no accelerometer');
+
+      alert('no magnetometer');
     } else {
       // alert('accelerometer found');
       window.addEventListener('deviceorientation', this.magnetometerUpdate, true);
@@ -54,7 +54,7 @@ class App extends Component {
       }, true);
     }
     if (window.innerHeight > window.innerWidth) {
-      alert('Please use Landscape!');
+      alert('Le mode paysage est plus adapté à cette apllication!');
     }
   }
 
@@ -65,6 +65,7 @@ class App extends Component {
 
   magnetometerUpdate = ({ alpha }) => {
     const { orientationPrevious } = this.state;
+
     let a = alpha;
     if (orientationPrevious === null) {
       this.setState({ orientationPrevious: alpha });
@@ -74,11 +75,14 @@ class App extends Component {
     // }
 
     const nextVal = ((orientationPrevious * 4) + (a)) / 5;
-    // console.log({ nextVal });
-    this.setState({
-      orientation: nextVal,
-      orientationPrevious: nextVal,
-    });
+    if (nextVal !== 0) {
+      this.setState({
+        orientation: nextVal,
+        orientationPrevious: nextVal,
+        control: false,
+      });
+    }
+    console.log({ nextVal });
   }
 
   handleOpenModal = (e, i, l) => {
@@ -209,7 +213,7 @@ class App extends Component {
 
   render() {
     const {
-      poiList, overList, lat, lng, msg, showModal, orientation, linesPos, iNav, list,
+      poiList, overList, lat, lng, msg, showModal, orientation, linesPos, iNav, list, control,
     } = this.state;
     // console.log(linesPos);
     const sceneStyle = {
@@ -222,7 +226,7 @@ class App extends Component {
     return (
       <div>
         <a-scene embedded stats cursor="rayOrigin: mouse" light="defaultLightsEnabled: false" style={sceneStyle}>
-          <Camera lat={lat} lng={lng} roty={orientation} />
+          <Camera lat={lat} lng={lng} roty={orientation} control={control} />
           <MediaCamera />
           {/* Affichage des POI de openstreetmap */}
           <a-entity
@@ -257,10 +261,10 @@ class App extends Component {
           ))}
 
           {overList && overList.map((e, i) => (
-            (e.tags.name || e.tags.amenity) && (
+            ((e.tags.name || e.tags.amenity) && i < 30) && (
               <Atext
                 key={e.id.toString()}
-                id={i}
+                id={i.toString()}
                 position={this.updateObjPosition(e.lat, e.lon)}
                 handleOpenModal={this.handleOpenModal}
                 value={e.tags.name || e.tags.amenity}
@@ -274,9 +278,9 @@ class App extends Component {
           ))}
 
           <Acompass value="N" color="red" position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} rotation="-90 90 -180" />
-          <a-box position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} color="red" depth="2" height="4" width="4" />
+          {/* <a-box position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} color="red" depth="2" height="4" width="4" /> */}
           <Acompass value="S" position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} rotation="-90 90 0" />
-          <a-box position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} color="white" depth="2" height="4" width="4" />
+          {/* <a-box position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} color="white" depth="2" height="4" width="4" /> */}
           <Acompass value="E" position={this.updateCompassPosition(Number(lat), (Number(lng) + 0.0002), 0)} rotation="-90 90 90" />
           <Acompass value="O" position={this.updateCompassPosition(Number(lat), (Number(lng) - 0.0002), 0)} rotation="-90 90 -90" />
         </a-scene>
