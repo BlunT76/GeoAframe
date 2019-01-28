@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import projector from 'ecef-projector';
 import 'aframe-look-at-component';
+
 import { getPoiInnoside, getPoiOverpass, navigate } from './utils/getPoi';
 import { drawLines } from './utils/drawLines';
 import Atext from './components/Atext';
-
 // import Aimage from './components/Aimage';
 import Acompass from './components/Acompass';
-// import Accelerometer from './components/Accelerometer'
 import Camera from './components/Camera';
 import MediaCamera from './components/MediaCamera';
 import Amodal from './components/Modal';
@@ -32,11 +32,11 @@ class App extends Component {
       orientationPrevious: null,
       lat: null,
       lng: null,
-      // lines: null,
       linesPos: null,
       showModal: false,
       msg: '',
       iNav: null,
+      list: null,
     };
   }
 
@@ -47,11 +47,14 @@ class App extends Component {
       alert('no accelerometer');
     } else {
       // alert('accelerometer found');
-      window.addEventListener('deviceorientation', this.accelerometerUpdate, true);
+      window.addEventListener('deviceorientation', this.magnetometerUpdate, true);
       window.addEventListener('compassneedscalibration', (event) => {
         alert('Your compass needs calibrating! Wave your device in a figure-eight motion');
         event.preventDefault();
       }, true);
+    }
+    if (window.innerHeight > window.innerWidth) {
+      alert('Please use Landscape!');
     }
   }
 
@@ -60,15 +63,15 @@ class App extends Component {
     navigator.geolocation.clearWatch(watchID);
   }
 
-  accelerometerUpdate = ({ alpha }) => {
+  magnetometerUpdate = ({ alpha }) => {
     const { orientationPrevious } = this.state;
     let a = alpha;
     if (orientationPrevious === null) {
       this.setState({ orientationPrevious: alpha });
     }
-    if (Math.abs(alpha - orientationPrevious) > 180) {
-      a = alpha - 360;
-    }
+    // if (Math.abs(alpha - orientationPrevious) > 180) {
+    //   a = alpha - 360;
+    // }
 
     const nextVal = ((orientationPrevious * 4) + (a)) / 5;
     // console.log({ nextVal });
@@ -78,8 +81,13 @@ class App extends Component {
     });
   }
 
-  handleOpenModal = (e, i) => {
-    this.setState({ showModal: true, msg: e, iNav: i });
+  handleOpenModal = (e, i, l) => {
+    this.setState({
+      showModal: true,
+      msg: e,
+      iNav: i,
+      list: l,
+    });
   }
 
   handleCloseModal = () => {
@@ -117,6 +125,7 @@ class App extends Component {
   // dans le unmount, je sais pas si c'est bien de faire ca)
   updateCamPosition = () => {
     const { prjPrevious } = this.state;
+    const { dataMenu } = this.props;
     let isList = false;
 
     this.setState({
@@ -142,15 +151,22 @@ class App extends Component {
           if (isList === false) {
             isList = true;
 
-            // getPoiInnoside(1, 1).then((response) => {
-            //   // console.log({ response });
-            //   this.setState({ poiList: response });
-            // });
-
-            getPoiOverpass(position.coords.latitude, position.coords.longitude).then((response) => {
-              console.log({ response });
-              this.setState({ overList: response });
-            });
+            if (dataMenu.innoside) {
+              getPoiInnoside(1, 1).then((response) => {
+                // console.log({ response });
+                this.setState({ poiList: response });
+              });
+            }
+            if (dataMenu.overpass) {
+              getPoiOverpass(
+                position.coords.latitude,
+                position.coords.longitude,
+                dataMenu.around,
+              ).then((response) => {
+                // console.log({ response });
+                this.setState({ overList: response });
+              });
+            }
           }
         }
       }, (error) => {
@@ -164,24 +180,27 @@ class App extends Component {
     });
   }
 
-  handleNavigate = (value, id) => {
+  handleNavigate = (value, id, l) => {
     const {
-      lat, lng, overList, camPosition,
+      lat, lng, overList, poiList, camPosition,
     } = this.state;
 
-    console.log('HANDLENAVIGATE: ', value, id, overList);
+    let list = null;
+    if (l === 'innoside') list = poiList;
+    if (l === 'overpass') list = overList;
+
     navigate(
       lat,
       lng,
-      overList[id].lat,
-      overList[id].lon,
+      list[id].lat || list[id].location.coordinates[1],
+      list[id].lon || list[id].location.coordinates[0],
     )
       .then((res) => {
-        console.log(res.features[0].geometry.coordinates);
+        // console.log(res.features[0].geometry.coordinates);
         const result = drawLines(
           res.features[0].geometry.coordinates,
-          overList[id].lat,
-          overList[id].lon,
+          list[id].lat,
+          list[id].lon,
           camPosition,
         );
         this.setState({ linesPos: result });
@@ -190,19 +209,19 @@ class App extends Component {
 
   render() {
     const {
-      poiList, overList, lat, lng, msg, showModal, orientation, linesPos, iNav,
+      poiList, overList, lat, lng, msg, showModal, orientation, linesPos, iNav, list,
     } = this.state;
     // console.log(linesPos);
     const sceneStyle = {
-      height: '100%',
-      width: '100%',
+      width: window.innerWidth,
+      height: window.innerHeight,
       zIndex: '1',
       backgroundColor: 'transparent',
     };
 
     return (
       <div>
-        <a-scene cursor="rayOrigin: mouse" light="defaultLightsEnabled: false" style={sceneStyle}>
+        <a-scene embedded stats cursor="rayOrigin: mouse" light="defaultLightsEnabled: false" style={sceneStyle}>
           <Camera lat={lat} lng={lng} roty={orientation} />
           <MediaCamera />
           {/* Affichage des POI de openstreetmap */}
@@ -223,15 +242,17 @@ class App extends Component {
           {poiList && poiList.map((e, i) => (
             <Atext
               key={e._id.toString()}
-              id={i}
+              id={i.toString()}
               position={
                 this.updateObjPosition(e.location.coordinates[1], e.location.coordinates[0])
               }
               handleOpenModal={this.handleOpenModal}
               value={e.name}
               look-at="[camera]"
-              width="30"
+              width="100"
+              height="5"
               color="color: #953292"
+              list="innoside"
             />
           ))}
 
@@ -244,14 +265,18 @@ class App extends Component {
                 handleOpenModal={this.handleOpenModal}
                 value={e.tags.name || e.tags.amenity}
                 look-at="[camera]"
-                width="30"
+                width="100"
+                height="5"
                 color="color: #FF6600"
+                list="overpass"
               />
             )
           ))}
 
-          <Acompass value="N" position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} rotation="-90 90 -180" />
+          <Acompass value="N" color="red" position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} rotation="-90 90 -180" />
+          <a-box position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} color="red" depth="2" height="4" width="4" />
           <Acompass value="S" position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} rotation="-90 90 0" />
+          <a-box position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} color="white" depth="2" height="4" width="4" />
           <Acompass value="E" position={this.updateCompassPosition(Number(lat), (Number(lng) + 0.0002), 0)} rotation="-90 90 90" />
           <Acompass value="O" position={this.updateCompassPosition(Number(lat), (Number(lng) - 0.0002), 0)} rotation="-90 90 -90" />
         </a-scene>
@@ -262,10 +287,29 @@ class App extends Component {
           open={showModal}
           handleCloseModal={this.handleCloseModal}
           handleNavigate={this.handleNavigate}
+          list={list}
         />
       </div>
     );
   }
 }
+
+App.propTypes = {
+  dataMenu: PropTypes.shape({
+    innoside: PropTypes.bool,
+    overpass: PropTypes.bool,
+    around: PropTypes.number,
+    perso: PropTypes.bool,
+  }),
+};
+
+App.defaultProps = {
+  dataMenu: {
+    innoside: false,
+    overpass: false,
+    around: 0,
+    perso: false,
+  },
+};
 
 export default App;

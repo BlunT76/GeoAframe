@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import 'aframe-look-at-component';
+// import 'aframe-look-at-component';
 
 class Camera extends Component {
   constructor(props) {
@@ -10,14 +10,14 @@ class Camera extends Component {
 
   render() {
     const { roty } = this.props;
-    const rotation = `0 ${roty} 0`;
+    const rotation = `0 ${roty - 180} 0`;
     return (
       <a-entity>
         <a-entity
           id="camera"
           ref={this.myRef}
           camera="active: true"
-          look-controls
+          // look-controls
           wasd-controls
           // listener
           near="0.005"

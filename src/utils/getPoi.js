@@ -15,7 +15,7 @@ export const getPoiInnoside = async (lat, lng) => {
   return null;
 };
 
-export const getPoiOverpass = async (lat, lng, node = 'amenity', ard = '1000') => {
+export const getPoiOverpass = async (lat, lng, ard = '100', node = 'amenity') => {
   if ((lat !== null) && (lng !== null)) {
     const response = await fetch(`${config.overpass}[${node}](around:${ard},${lat},${lng});out;`, { method: 'GET' });
     const responseJson = await response.json();

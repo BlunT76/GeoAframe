@@ -3,7 +3,7 @@ import projector from 'ecef-projector';
 export const drawLines = (route, destlat, destlng, camPosition) => {
   // const { lines, camPosition } = this.state;
   // console.table(lines);
-  let result = [];
+  const result = [];
   let prjstart;
   let prjend;
 

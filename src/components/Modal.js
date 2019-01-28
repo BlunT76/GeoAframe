@@ -11,6 +11,7 @@ const Amodal = (props) => {
     msg,
     handleNavigate,
     id,
+    list,
   } = props;
 
   return (
@@ -26,7 +27,7 @@ const Amodal = (props) => {
         }}
       >
         <h2>{msg}</h2>
-        <button type="button" onClick={() => handleNavigate(msg, id)}>Navigate</button>
+        <button type="button" onClick={() => handleNavigate(msg, id, list)}>Navigate</button>
       </Modal>
     </div>
   );
@@ -39,6 +40,7 @@ Amodal.propTypes = {
   msg: PropTypes.string,
   handleNavigate: PropTypes.func,
   id: PropTypes.number,
+  list: PropTypes.string,
 };
 
 Amodal.defaultProps = {
@@ -48,6 +50,7 @@ Amodal.defaultProps = {
   msg: '',
   handleNavigate: () => {},
   id: 0,
+  list: '',
 };
 
 export default Amodal;

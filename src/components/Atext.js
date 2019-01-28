@@ -6,26 +6,29 @@ const Atext = (props) => {
   const {
     value,
     width,
+    height,
     color,
     position,
     rotation,
     handleOpenModal,
     id,
+    list,
   } = props;
 
   const cone = position.split(' ');
-  const conePosition = `${cone[0]} -1 ${cone[2]}`;
+  const conePosition = `${cone[0]} -10 ${cone[2]}`;
 
   return (
     <a-entity>
       <a-entity
-        onClick={() => handleOpenModal(value, id)}
-        geometry={`primitive: plane; height: 1; width: ${width / 2};`}
+        onClick={() => handleOpenModal(value, Number(id), list)}
+        geometry={`primitive: plane; height: ${height * 2}; width: ${width / 2};`}
         material={color}
-        text={`value:${value}; width: ${width}; height: 1;  align: center;`}
+        text={`value:${value}; width: ${width}; height: ${height};  align: center;`}
         position={position}
         rotation={rotation}
         look-at="[camera]"
+        list={list}
       />
       {/* <a-entity
         onClick={() => handleOpenModal(value)}
@@ -39,7 +42,7 @@ const Atext = (props) => {
       <a-entity
         material={color}
         position={conePosition}
-        geometry="primitive: cone; segmentsRadial: 4; radiusBottom: 0.01; radiusTop: 0.5; height: 1"
+        geometry="primitive: cone; segmentsRadial: 4; radiusBottom: 0.01; radiusTop: 5; height: 10"
       />
     </a-entity>
   );
@@ -48,21 +51,25 @@ const Atext = (props) => {
 Atext.propTypes = {
   value: PropTypes.string,
   width: PropTypes.string,
+  height: PropTypes.string,
   color: PropTypes.string,
   position: PropTypes.string,
   rotation: PropTypes.string,
   handleOpenModal: PropTypes.func,
   id: PropTypes.string,
+  list: PropTypes.string,
 };
 
 Atext.defaultProps = {
   value: '',
   width: '0',
+  height: '0',
   color: 'transparent',
   position: '0 0 0',
   rotation: '0 0 0',
   handleOpenModal: () => {},
   id: '',
+  list: '',
 };
 
 export default Atext;
