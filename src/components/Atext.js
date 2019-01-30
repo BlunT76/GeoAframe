@@ -30,19 +30,10 @@ const Atext = (props) => {
         look-at="[camera]"
         list={list}
       />
-      {/* <a-entity
-        onClick={() => handleOpenModal(value)}
-        geometry="primitive: plane; "
-        material={color}
-        text="value: test; width: 10; align: center"
-        position="0 0 -10"
-        rotation={rotation}
-        look-at="[camera]"
-      /> */}
       <a-entity
         material={color}
         position={conePosition}
-        geometry="primitive: cone; segmentsRadial: 4; radiusBottom: 0.01; radiusTop: 5; height: 10"
+        geometry="primitive: cone; segments-radial: 4; segments-height: 1; radiusBottom: 0.01; radiusTop: 5; height: 10"
       />
     </a-entity>
   );

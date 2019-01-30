@@ -28,6 +28,18 @@ export const getPoiOverpass = async (lat, lng, ard = '100', node = 'amenity') =>
   return null;
 };
 
+export const getPoiPersoAll = async () => {
+  const response = await fetch(`${config.urlPersoAll}`, { method: 'GET' });
+  const responseJson = await response.json();
+  // console.log(responseJson);
+
+  if (responseJson.length === 0) {
+    console.log('rien a proximité');
+    return null;
+  }
+  return responseJson;
+};
+
 export const navigate = async (lat, lng, latpoi, lngpoi) => {
   console.log(`https://api.openrouteservice.org/directions?api_key=${config.apikeyOrs}&coordinates=${lng},${lat}%7C${lngpoi},${latpoi}&profile=foot-walking&format=geojson`);
   const response = await fetch(`https://api.openrouteservice.org/directions?api_key=${config.apikeyOrs}&coordinates=${lng},${lat}%7C${lngpoi},${latpoi}&profile=foot-walking&format=geojson`);

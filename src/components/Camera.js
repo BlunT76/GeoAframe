@@ -9,7 +9,7 @@ class Camera extends Component {
 
   render() {
     const { roty, control } = this.props;
-    console.log({ control });
+    // console.log({ control });
 
     const rotation = `0 ${roty - 180} 0`;
     return (

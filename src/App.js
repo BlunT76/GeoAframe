@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import projector from 'ecef-projector';
 import 'aframe-look-at-component';
-
-import { getPoiInnoside, getPoiOverpass, navigate } from './utils/getPoi';
+import {
+  getPoiInnoside,
+  getPoiOverpass,
+  navigate,
+  getPoiPersoAll,
+} from './utils/getPoi';
 import { drawLines } from './utils/drawLines';
 import Atext from './components/Atext';
 // import Aimage from './components/Aimage';
@@ -26,6 +30,7 @@ class App extends Component {
       prjPrevious: [0, 0, 0],
       poiList: [],
       overList: [],
+      persoList: [],
       orientation: null,
       orientationPrevious: null,
       lat: null,
@@ -65,16 +70,33 @@ class App extends Component {
 
   magnetometerUpdate = ({ alpha }) => {
     const { orientationPrevious } = this.state;
-
     let a = alpha;
+    let nextVal = null;
     if (orientationPrevious === null) {
       this.setState({ orientationPrevious: alpha });
     }
     // if (Math.abs(alpha - orientationPrevious) > 180) {
     //   a = alpha - 360;
     // }
+    if (orientationPrevious > 358 && a < 3) {
+      console.log('ICI');
+      a += orientationPrevious;
+      nextVal = ((orientationPrevious * 4) + (a)) / 5;
+      nextVal -= 360;
+      console.log(nextVal);
+    }
 
-    const nextVal = ((orientationPrevious * 4) + (a)) / 5;
+    if (orientationPrevious < 3 && a > 358) {
+      console.log('LA');
+      a = orientationPrevious - a;
+      nextVal = ((orientationPrevious * 4) + (a)) / 5;
+      nextVal += 360;
+      console.log(nextVal);
+    } else {
+      // console.log('ELSE');
+      nextVal = ((orientationPrevious * 4) + (a)) / 5;
+    }
+
     if (nextVal !== 0) {
       this.setState({
         orientation: nextVal,
@@ -82,7 +104,6 @@ class App extends Component {
         control: false,
       });
     }
-    console.log({ nextVal });
   }
 
   handleOpenModal = (e, i, l) => {
@@ -171,6 +192,10 @@ class App extends Component {
                 this.setState({ overList: response });
               });
             }
+            if (dataMenu.perso) {
+              getPoiPersoAll()
+                .then(response => this.setState({ persoList: response }));
+            }
           }
         }
       }, (error) => {
@@ -184,20 +209,30 @@ class App extends Component {
     });
   }
 
-  handleNavigate = (value, id, l) => {
+  handleNavigate = (value, id, selectedList) => {
     const {
-      lat, lng, overList, poiList, camPosition,
+      lat, lng, overList, poiList, persoList, camPosition,
     } = this.state;
 
-    let list = null;
-    if (l === 'innoside') list = poiList;
-    if (l === 'overpass') list = overList;
+    const list = {
+      innoside: poiList,
+      overpass: overList,
+      perso: persoList,
+    }[selectedList];
+    //              //overpass      //perso         //innoside
+    let destLat = list[id].lat || list[id].loc || list[id].location;
+    let destLon = list[id].lon || list[id].loc || list[id].location;
+
+    if (typeof destLat !== 'number') destLat = destLat.coordinates[1];
+    if (typeof destLon !== 'number') destLon = destLon.coordinates[0];
+    console.log(lng, lat, destLon, destLat);
+
 
     navigate(
       lat,
       lng,
-      list[id].lat || list[id].location.coordinates[1],
-      list[id].lon || list[id].location.coordinates[0],
+      destLat,
+      destLon,
     )
       .then((res) => {
         // console.log(res.features[0].geometry.coordinates);
@@ -208,41 +243,61 @@ class App extends Component {
           camPosition,
         );
         this.setState({ linesPos: result });
+        console.log(result);
       });
   }
 
   render() {
     const {
-      poiList, overList, lat, lng, msg, showModal, orientation, linesPos, iNav, list, control,
+      poiList,
+      overList,
+      persoList,
+      lat,
+      lng,
+      msg,
+      showModal,
+      orientation,
+      linesPos,
+      iNav,
+      list,
+      control,
     } = this.state;
-    // console.log(linesPos);
+
     const sceneStyle = {
       width: window.innerWidth,
       height: window.innerHeight,
       zIndex: '1',
       backgroundColor: 'transparent',
+      overflow: 'hidden',
     };
 
     return (
       <div>
         <a-scene embedded stats cursor="rayOrigin: mouse" light="defaultLightsEnabled: false" style={sceneStyle}>
+
+          {/* Affichage de la camera  A-frame */}
           <Camera lat={lat} lng={lng} roty={orientation} control={control} />
+
+          {/* Affichage de la webcam en arriere plan */}
           <MediaCamera />
-          {/* Affichage des POI de openstreetmap */}
+
+          {/* Affichage d'un cone vert sur la position de l'utilisateur */}
           <a-entity
             material="color: #4BB14F"
             position={this.updateObjPosition(lat, lng)}
             geometry="primitive: cone; segmentsRadial: 4; radiusBottom: 0.01; radiusTop: 0.5; height: 2"
           />
 
-          {linesPos && linesPos.map((e, i) => (
+          {/* Affichage des lignes de navigation */}
+          {linesPos && linesPos.map(e => (
             <a-entity
               line={e}
-              key={`line${i}`}
+              key={`line${e}`}
             />
           ))
           }
 
+          {/* Affichage des POI de Innoside */}
           {poiList && poiList.map((e, i) => (
             <Atext
               key={e._id.toString()}
@@ -260,6 +315,7 @@ class App extends Component {
             />
           ))}
 
+          {/* Affichage des POI de openstreetmap */}
           {overList && overList.map((e, i) => (
             ((e.tags.name || e.tags.amenity) && i < 30) && (
               <Atext
@@ -277,10 +333,27 @@ class App extends Component {
             )
           ))}
 
+          {/* Affichage des POI de openstreetmap */}
+          {persoList && persoList.map((e, i) => (
+            ((e.name) && i < 30) && (
+              <Atext
+                key={e._id}
+                id={i.toString()}
+                position={this.updateObjPosition(e.loc.coordinates[1], e.loc.coordinates[0])}
+                handleOpenModal={this.handleOpenModal}
+                value={e.name}
+                look-at="[camera]"
+                width="100"
+                height="5"
+                color="color: #FF6600"
+                list="perso"
+              />
+            )
+          ))}
+
+          {/* Affichage d'une boussole simplifiée */}
           <Acompass value="N" color="red" position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} rotation="-90 90 -180" />
-          {/* <a-box position={this.updateCompassPosition((Number(lat) + 0.0002), Number(lng), 0)} color="red" depth="2" height="4" width="4" /> */}
           <Acompass value="S" position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} rotation="-90 90 0" />
-          {/* <a-box position={this.updateCompassPosition((Number(lat) - 0.0002), Number(lng), 0)} color="white" depth="2" height="4" width="4" /> */}
           <Acompass value="E" position={this.updateCompassPosition(Number(lat), (Number(lng) + 0.0002), 0)} rotation="-90 90 90" />
           <Acompass value="O" position={this.updateCompassPosition(Number(lat), (Number(lng) - 0.0002), 0)} rotation="-90 90 -90" />
         </a-scene>

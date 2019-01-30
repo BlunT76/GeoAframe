@@ -22,7 +22,7 @@ const Amodal = (props) => {
         onClose={() => handleCloseModal()}
         center
         classNames={{
-          // overlay: styles.overlay,
+          overlay: styles.overlay,
           modal: { background: 'red' },
         }}
       >

@@ -66,7 +66,7 @@ class Menu extends Component {
                     className="form-check-input"
                     id="checkOverpass"
                   />
-                  <label className="form-check-label" htmlFor="checkOverpass">Poi autour de moi</label>
+                  <label className="form-check-label mr-2" htmlFor="checkOverpass">Poi autour de moi</label>
                 </div>
                 <div className="form-group">
                   <input
@@ -90,7 +90,6 @@ class Menu extends Component {
                   type="checkbox"
                   className="form-check-input"
                   id="checkPerso"
-                  disabled
                 />
                 <label className="form-check-label" htmlFor="checkPerso">Poi personnalisé</label>
               </div>
