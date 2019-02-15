@@ -2,15 +2,16 @@
   "name": "test_react_capacitor",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "npm": "6.5.0",
+    "node": "8.12.0"
+  },
   "dependencies": {
     "@capacitor/android": "^1.0.0-beta.11",
     "@capacitor/cli": "^1.0.0-beta.11",
     "@capacitor/core": "^1.0.0-beta.11",
     "aframe": "^0.8.2",
     "aframe-look-at-component": "^0.7.0",
-    "ar.js": "^1.6.2",
-    "cordova-plugin-geolocation": "^4.0.1",
-    "cordova-plugin-magnetometer": "^1.0.0",
     "ecef-projector": "^1.0.1",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
@@ -38,6 +39,7 @@
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-react": "^7.12.4"
+    "eslint-plugin-react": "^7.12.4",
+    "jasmine": "^3.3.1"
   }
 }

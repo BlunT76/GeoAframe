@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-responsive-modal';
-import styles from '../index.css';
+import styles from './custom-styling.css';
 
 const Amodal = (props) => {
   const {
@@ -22,12 +22,14 @@ const Amodal = (props) => {
         onClose={() => handleCloseModal()}
         center
         classNames={{
-          overlay: styles.overlay,
-          modal: { background: 'red' },
+          overlay: styles.customOverlay,
+          modal: styles.customModal,
         }}
       >
-        <h2>{msg}</h2>
-        <button type="button" onClick={() => handleNavigate(msg, id, list)}>Navigate</button>
+        <div className="m-4">
+          <h2>{msg}</h2>
+          <button type="button" className="btn btn-outline-light btn-lg btn-block mt-5" onClick={() => handleNavigate(msg, id, list)}>Navigate</button>
+        </div>
       </Modal>
     </div>
   );

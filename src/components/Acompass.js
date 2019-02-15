@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import 'aframe-look-at-component';
 
 const Acompass = (props) => {
-  const { value, position, rotation, color } = props;
+  const {
+    value, position, rotation, color,
+  } = props;
+
   return (
     <a-text value={value} color={color} position={position} width="50" rotation={rotation} />
   );

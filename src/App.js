@@ -46,17 +46,10 @@ class App extends Component {
 
   componentDidMount() {
     this.updateCamPosition();
-    if (window.DeviceOrientationEvent === undefined) {
-      // No accelerometer is present. Use buttons.
-
-      alert('no magnetometer');
+    if (window.DeviceOrientation === undefined) {
+      alert('No magnetometer \nUse your fingers to swipe the screen');
     } else {
-      // alert('accelerometer found');
       window.addEventListener('deviceorientation', this.magnetometerUpdate, true);
-      window.addEventListener('compassneedscalibration', (event) => {
-        alert('Your compass needs calibrating! Wave your device in a figure-eight motion');
-        event.preventDefault();
-      }, true);
     }
     if (window.innerHeight > window.innerWidth) {
       alert('Le mode paysage est plus adapté à cette apllication!');
@@ -66,44 +59,34 @@ class App extends Component {
   componentWillUnmount() {
     const { watchID } = this.state;
     navigator.geolocation.clearWatch(watchID);
+    window.removeEventListener('deviceorientation', this.magnetometerUpdate, true);
   }
 
   magnetometerUpdate = ({ alpha }) => {
     const { orientationPrevious } = this.state;
-    let a = alpha;
     let nextVal = null;
+
     if (orientationPrevious === null) {
       this.setState({ orientationPrevious: alpha });
     }
-    // if (Math.abs(alpha - orientationPrevious) > 180) {
-    //   a = alpha - 360;
-    // }
-    if (orientationPrevious > 358 && a < 3) {
-      console.log('ICI');
-      a += orientationPrevious;
-      nextVal = ((orientationPrevious * 4) + (a)) / 5;
-      nextVal -= 360;
-      console.log(nextVal);
-    }
 
-    if (orientationPrevious < 3 && a > 358) {
-      console.log('LA');
-      a = orientationPrevious - a;
-      nextVal = ((orientationPrevious * 4) + (a)) / 5;
-      nextVal += 360;
-      console.log(nextVal);
+    const tmpPrevious = (orientationPrevious % 360) / 180;
+
+    if (
+      ((tmpPrevious >= 1 && alpha / 180 >= 1)
+      || ((tmpPrevious) <= 1 && alpha / 180 <= 1))
+    ) {
+      nextVal = Math.floor(orientationPrevious / 360) * 360 + alpha;
+      nextVal = (orientationPrevious * 4 + nextVal) / 5;
     } else {
-      // console.log('ELSE');
-      nextVal = ((orientationPrevious * 4) + (a)) / 5;
+      nextVal = Math.ceil(orientationPrevious / 360) * 360 + alpha;
     }
 
-    if (nextVal !== 0) {
-      this.setState({
-        orientation: nextVal,
-        orientationPrevious: nextVal,
-        control: false,
-      });
-    }
+    this.setState({
+      orientation: nextVal,
+      orientationPrevious: nextVal,
+      control: false,
+    });
   }
 
   handleOpenModal = (e, i, l) => {
@@ -271,9 +254,14 @@ class App extends Component {
       overflow: 'hidden',
     };
 
+    let startLine;
+    if (linesPos) {
+      startLine = linesPos[0].split(' ').filter(e => !isNaN(e));
+    }
+
     return (
       <div>
-        <a-scene embedded stats cursor="rayOrigin: mouse" light="defaultLightsEnabled: false" style={sceneStyle}>
+        <a-scene embedded cursor="rayOrigin: mouse" light="defaultLightsEnabled: false" style={sceneStyle}>
 
           {/* Affichage de la camera  A-frame */}
           <Camera lat={lat} lng={lng} roty={orientation} control={control} />
@@ -281,12 +269,25 @@ class App extends Component {
           {/* Affichage de la webcam en arriere plan */}
           <MediaCamera />
 
-          {/* Affichage d'un cone vert sur la position de l'utilisateur */}
-          <a-entity
-            material="color: #4BB14F"
-            position={this.updateObjPosition(lat, lng)}
-            geometry="primitive: cone; segmentsRadial: 4; radiusBottom: 0.01; radiusTop: 0.5; height: 2"
-          />
+          {/* Affichage d'un cone vert sur la position de depart */}
+          {linesPos && (
+            <a-entity>
+              <a-entity
+                material="color: #4BB14F"
+                position={`${startLine[0]} -0.5 ${startLine[2]}`}
+                geometry="primitive: cone; segmentsRadial: 4; radiusBottom: 0.01; radiusTop: 0.2; height: 1"
+              />
+              <a-text
+                position={`${startLine[0]} 0.2 ${startLine[2]}`}
+                value="START"
+                look-at="[camera]"
+                width="10"
+                height="1"
+                align="center"
+                color="#4BB14F"
+              />
+            </a-entity>
+          )}
 
           {/* Affichage des lignes de navigation */}
           {linesPos && linesPos.map(e => (
@@ -345,7 +346,7 @@ class App extends Component {
                 look-at="[camera]"
                 width="100"
                 height="5"
-                color="color: #FF6600"
+                color="color: #414098"
                 list="perso"
               />
             )

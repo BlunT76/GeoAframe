@@ -41,7 +41,6 @@ export const getPoiPersoAll = async () => {
 };
 
 export const navigate = async (lat, lng, latpoi, lngpoi) => {
-  console.log(`https://api.openrouteservice.org/directions?api_key=${config.apikeyOrs}&coordinates=${lng},${lat}%7C${lngpoi},${latpoi}&profile=foot-walking&format=geojson`);
   const response = await fetch(`https://api.openrouteservice.org/directions?api_key=${config.apikeyOrs}&coordinates=${lng},${lat}%7C${lngpoi},${latpoi}&profile=foot-walking&format=geojson`);
   const responseJson = await response.json();
   if (!responseJson) {

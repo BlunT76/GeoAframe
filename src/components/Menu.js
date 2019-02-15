@@ -16,6 +16,7 @@ class Menu extends Component {
   }
 
   handleChange(event) {
+    console.log(event.target);
     const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
@@ -94,7 +95,7 @@ class Menu extends Component {
                 <label className="form-check-label" htmlFor="checkPerso">Poi personnalisé</label>
               </div>
 
-              <button type="submit" className="btn btn-outline-light btn-lg btn-block">Lancer</button>
+              <button type="button" onClick={() => handleDataMenu([checkInnoside, checkOverpass, around, checkPerso])} className="btn btn-outline-light btn-lg btn-block">Lancer</button>
             </form>
             <hr style={{ backgroundColor: 'white' }} className="" />
           </div>

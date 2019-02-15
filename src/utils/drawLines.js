@@ -5,12 +5,6 @@ export const drawLines = (route, destlat, destlng, camPosition) => {
   let prjstart;
   let prjend;
 
-  // Insertion de la 1ere ligne
-  result.push(`
-    start: 0 -1 0 ; 
-    end: ${camPosition[0] - projector.project(Number(route[0][1]), Number(route[0][0]), 0)[0]} -1 -${camPosition[1] - projector.project(Number(route[0][1]), Number(route[0][0]), 0)[1]}; 
-    color: yellow
-    `);
   /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
   for (let i = 0; i < route.length; i++) {
     if (route[i + 1] !== undefined) {
@@ -27,15 +21,15 @@ export const drawLines = (route, destlat, destlng, camPosition) => {
     const ozend = camPosition[1] - prjend[1];
 
     if (ozstart > 0 && ozend > 0) {
-      result.push(`start: ${oxstart} -1 -${ozstart} ; end: ${oxend} -1 -${ozend}; color: yellow`);
+      result.push(`start: ${oxstart} -1 -${ozstart} ; end: ${oxend} -1 -${ozend}; color: #FFD502`);
     } else if (ozstart > 0 && ozend < 0) {
-      result.push(`start: ${oxstart} -1 -${ozstart} ; end: ${oxend} -1 ${Math.abs(ozend)}; color: yellow`);
+      result.push(`start: ${oxstart} -1 -${ozstart} ; end: ${oxend} -1 ${Math.abs(ozend)}; color: #FFD502`);
     } else if (ozstart < 0 && ozend > 0) {
-      result.push(`start: ${oxstart} -1 ${Math.abs(ozstart)} ; end: ${oxend} -1 -${ozend}; color: yellow`);
+      result.push(`start: ${oxstart} -1 ${Math.abs(ozstart)} ; end: ${oxend} -1 -${ozend}; color: #FFD502`);
     } else {
       const ozstarta = Math.abs(ozstart);
       const ozenda = Math.abs(ozend);
-      result.push(`start: ${oxstart} -1 ${ozstarta} ; end: ${oxend} -1 ${ozenda}; color: yellow`);
+      result.push(`start: ${oxstart} -1 ${ozstarta} ; end: ${oxend} -1 ${ozenda}; color: #FFD502`);
     }
   }
   return result;
