@@ -14,7 +14,7 @@ import Acompass from './components/Acompass';
 import Camera from './components/Camera';
 import MediaCamera from './components/MediaCamera';
 import Amodal from './components/Modal';
-import sceneStyle from './style.css';
+import sceneStyle from './css/style.css';
 
 class App extends PureComponent {
   constructor(props) {

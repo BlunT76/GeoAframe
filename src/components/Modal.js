@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-responsive-modal';
-import styles from './custom-styling.css';
+import styles from '../css/custom-styling.css';
 
 const Amodal = (props) => {
   const {

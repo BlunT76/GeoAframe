@@ -1,12 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import './css/index.css';
 import * as serviceWorker from './serviceWorker';
 import Home from './Home';
 
-// console.assert = (test, value) => { !test && console.trace('assert failed', value); };
 ReactDOM.render(
-
   <Home />,
   document.getElementById('root'),
 );
