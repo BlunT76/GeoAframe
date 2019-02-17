@@ -5,8 +5,7 @@ export const drawLines = (route, destlat, destlng, camPosition) => {
   let prjstart;
   let prjend;
 
-  /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-  for (let i = 0; i < route.length; i++) {
+  for (let i = 0; i < route.length; i += 1) {
     if (route[i + 1] !== undefined) {
       prjstart = projector.project(Number(route[i][1]), Number(route[i][0]), 0);
       prjend = projector.project(Number(route[i + 1][1]), Number(route[i + 1][0]), 0);

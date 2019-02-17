@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import projector from 'ecef-projector';
 import 'aframe-look-at-component';
@@ -10,22 +10,18 @@ import {
 } from './utils/getPoi';
 import { drawLines } from './utils/drawLines';
 import Atext from './components/Atext';
-// import Aimage from './components/Aimage';
 import Acompass from './components/Acompass';
 import Camera from './components/Camera';
 import MediaCamera from './components/MediaCamera';
 import Amodal from './components/Modal';
+import sceneStyle from './style.css';
 
-// const AFRAME = window.AFRAME
-
-
-class App extends Component {
+class App extends PureComponent {
   constructor(props) {
     super(props);
     this.AframeDiv = React.createRef();
-
+    this.watchID = null;
     this.state = {
-      watchID: null,
       camPosition: [0, 0, 0],
       prjPrevious: [0, 0, 0],
       poiList: [],
@@ -41,6 +37,7 @@ class App extends Component {
       iNav: null,
       list: null,
       control: true,
+      isList: false,
     };
   }
 
@@ -57,8 +54,7 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    const { watchID } = this.state;
-    navigator.geolocation.clearWatch(watchID);
+    navigator.geolocation.clearWatch(this.watchID);
     window.removeEventListener('deviceorientation', this.magnetometerUpdate, true);
   }
 
@@ -72,10 +68,7 @@ class App extends Component {
 
     const tmpPrevious = (orientationPrevious % 360) / 180;
 
-    if (
-      ((tmpPrevious >= 1 && alpha / 180 >= 1)
-      || ((tmpPrevious) <= 1 && alpha / 180 <= 1))
-    ) {
+    if ((tmpPrevious >= 1 && alpha / 180 >= 1) || ((tmpPrevious) <= 1 && alpha / 180 <= 1)) {
       nextVal = Math.floor(orientationPrevious / 360) * 360 + alpha;
       nextVal = (orientationPrevious * 4 + nextVal) / 5;
     } else {
@@ -129,67 +122,62 @@ class App extends Component {
     return `${ox} -10 ${oza}`;
   }
 
-  // launch the watchPosition function (dans un setState pour pouvoir le stopper
-  // dans le unmount, je sais pas si c'est bien de faire ca)
   updateCamPosition = () => {
     const { prjPrevious } = this.state;
-    const { dataMenu } = this.props;
-    let isList = false;
 
-    this.setState({
-      watchID: navigator.geolocation.watchPosition((position) => {
-        if (position) {
-          // console.log(position.coords.latitude, position.coords.longitude);
-
-          const prj = projector.project(position.coords.latitude, position.coords.longitude, 0);
-          if (prjPrevious === null) {
-            this.setState({ prjPrevious: prj });
-          }
-          const nextLat = ((prjPrevious[0] * 4) + (prj[0])) / 5;
-          const nextLng = ((prjPrevious[1] * 4) + (prj[1])) / 5;
-          const nextAlt = ((prjPrevious[2] * 4) + (prj[2])) / 5;
-
-          this.setState({
-            prjPrevious: [nextLat, nextLng, nextAlt],
-            lat: position.coords.latitude.toFixed(6),
-            lng: position.coords.longitude.toFixed(6),
-            camPosition: prj,
-          });
-
-          if (isList === false) {
-            isList = true;
-
-            if (dataMenu.innoside) {
-              getPoiInnoside(1, 1).then((response) => {
-                // console.log({ response });
-                this.setState({ poiList: response });
-              });
-            }
-            if (dataMenu.overpass) {
-              getPoiOverpass(
-                position.coords.latitude,
-                position.coords.longitude,
-                dataMenu.around,
-              ).then((response) => {
-                // console.log({ response });
-                this.setState({ overList: response });
-              });
-            }
-            if (dataMenu.perso) {
-              getPoiPersoAll()
-                .then(response => this.setState({ persoList: response }));
-            }
-          }
+    this.watchID = navigator.geolocation.watchPosition((position) => {
+      if (position) {
+        const prj = projector.project(position.coords.latitude, position.coords.longitude, 0);
+        if (prjPrevious === null) {
+          this.setState({ prjPrevious: prj });
         }
-      }, (error) => {
-        console.log(error);
-        isList = false;
-      }, {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 2000,
-      }),
+        const nextLat = ((prjPrevious[0] * 4) + (prj[0])) / 5;
+        const nextLng = ((prjPrevious[1] * 4) + (prj[1])) / 5;
+        const nextAlt = ((prjPrevious[2] * 4) + (prj[2])) / 5;
+
+        this.setState({
+          prjPrevious: [nextLat, nextLng, nextAlt],
+          lat: position.coords.latitude.toFixed(6),
+          lng: position.coords.longitude.toFixed(6),
+          camPosition: prj,
+        });
+        this.fetchList(position);
+      }
+    }, (error) => {
+      console.log(error);
+      this.setState({ isList: false });
+    }, {
+      enableHighAccuracy: true,
+      maximumAge: 1000,
+      timeout: 2000,
     });
+  }
+
+  fetchList = (position) => {
+    const { isList } = this.state;
+    const { dataMenu } = this.props;
+    if (isList === false) {
+      this.setState({ isList: true });
+
+      if (dataMenu.innoside) {
+        getPoiInnoside(1, 1).then((response) => {
+          this.setState({ poiList: response });
+        });
+      }
+      if (dataMenu.overpass) {
+        getPoiOverpass(
+          position.coords.latitude,
+          position.coords.longitude,
+          dataMenu.around,
+        ).then((response) => {
+          this.setState({ overList: response });
+        });
+      }
+      if (dataMenu.perso) {
+        getPoiPersoAll()
+          .then(response => this.setState({ persoList: response }));
+      }
+    }
   }
 
   handleNavigate = (value, id, selectedList) => {
@@ -202,23 +190,15 @@ class App extends Component {
       overpass: overList,
       perso: persoList,
     }[selectedList];
-    //              //overpass      //perso         //innoside
+
     let destLat = list[id].lat || list[id].loc || list[id].location;
     let destLon = list[id].lon || list[id].loc || list[id].location;
 
     if (typeof destLat !== 'number') destLat = destLat.coordinates[1];
     if (typeof destLon !== 'number') destLon = destLon.coordinates[0];
-    console.log(lng, lat, destLon, destLat);
 
-
-    navigate(
-      lat,
-      lng,
-      destLat,
-      destLon,
-    )
+    navigate(lat, lng, destLat, destLon)
       .then((res) => {
-        // console.log(res.features[0].geometry.coordinates);
         const result = drawLines(
           res.features[0].geometry.coordinates,
           list[id].lat,
@@ -226,7 +206,6 @@ class App extends Component {
           camPosition,
         );
         this.setState({ linesPos: result });
-        console.log(result);
       });
   }
 
@@ -246,12 +225,9 @@ class App extends Component {
       control,
     } = this.state;
 
-    const sceneStyle = {
+    const sceneStyleInline = {
       width: window.innerWidth,
       height: window.innerHeight,
-      zIndex: '1',
-      backgroundColor: 'transparent',
-      overflow: 'hidden',
     };
 
     let startLine;
@@ -261,7 +237,7 @@ class App extends Component {
 
     return (
       <div>
-        <a-scene embedded cursor="rayOrigin: mouse" light="defaultLightsEnabled: false" style={sceneStyle}>
+        <a-scene embedded cursor="rayOrigin: mouse" light="defaultLightsEnabled: false" className={sceneStyle} style={sceneStyleInline}>
 
           {/* Affichage de la camera  A-frame */}
           <Camera lat={lat} lng={lng} roty={orientation} control={control} />

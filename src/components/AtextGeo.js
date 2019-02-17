@@ -1,47 +1,45 @@
-import React, {Component} from 'react';
+import React, { PureComponent } from 'react';
+
 require('aframe-look-at-component');
 const projector = require('ecef-projector');
-//const haveDistance = require ('../utils/haversineDistance')
-//Same as Atext with position based on gps coordinates
 
-class AtextGeo extends Component {
+
+class AtextGeo extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       pos: null,
-      rotation: null,
-      angleObj: null
-    }
+      // rotation: null,
+      // angleObj: null
+    };
   }
 
-  componentDidMount(){
-    this.getProjection()
-    //this.handleObjRotation()
+  componentDidMount() {
+    this.getProjection();
   }
-
-  
 
   getProjection = () => {
-    let prj = projector.project(this.props.lat, this.props.lng, 0)
-    this.setState({pos:prj})
+    const {lat, lng } = this.props;
+    const prj = projector.project(lat, lng, 0);
+    this.setState({ pos: prj });
   }
-  
+
   handleObjRotation = () => {
-    //let prj = projector.project(this.props.lat, this.props.lng, 0)
-    //this.setState({pos:prj})
-    if(this.props.cam && this.state.pos){
-      console.log(this.props.cam)
-      let dx = this.state.pos[2]- this.props.cam[2]
-      let dy = this.state.pos[1]-this.props.cam[1]
-      let c = Math.atan(dy / dx)
-      
-      if(dx < 0){
-        c = c + Math.PI
-      }
-      let res = c * 180 / Math.PI
-      console.log(res)
-      this.setState({angleObj: res}) 
+    const { cam } = this.props;
+    const { pos } = this.state;
+    if (!cam || !pos) {
+      return;
     }
+
+    const dx = pos[2] - cam[2];
+    const dy = pos[1] - cam[1];
+    let c = Math.atan(dy / dx);
+
+    if (dx < 0) {
+      c += Math.PI;
+    }
+    const res = c * 180 / Math.PI;
+    this.setState({ angleObj: res });
   }
 
   render() {

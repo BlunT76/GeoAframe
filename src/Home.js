@@ -4,10 +4,8 @@ import BtnMenu from './components/BtnMenu';
 import Menu from './components/Menu';
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.HomeDiv = React.createRef();
-
+  constructor() {
+    super();
     this.state = {
       showApp: false,
       showMenu: true,

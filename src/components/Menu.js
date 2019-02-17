@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import logoInnoside from '../img/innoside.png'
 
 class Menu extends Component {
   constructor(props) {
     super(props);
-    this.HomeDiv = React.createRef();
-
     this.state = {
       checkInnoside: false,
       checkOverpass: false,
@@ -16,7 +15,6 @@ class Menu extends Component {
   }
 
   handleChange(event) {
-    console.log(event.target);
     const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
@@ -34,11 +32,11 @@ class Menu extends Component {
     return (
       <div className="home">
         <div className="container-fluid home text-light pl-0 pr-0">
-          <img src="./images/innoside.png" alt="logo innoside" width="30%" height="auto" className="m-3" />
+          <img src={logoInnoside} alt="logo innoside" width="30%" height="auto" className="m-3" />
           <hr style={{ backgroundColor: 'white' }} className="m-0" />
           <div className="container text-light">
             <h1 className="text-center purple">Description</h1>
-            <p>Descriptionde l'application a ecrire</p>
+            <p>Description de l&apos;application a écrire</p>
             <hr style={{ backgroundColor: 'white' }} className="" />
             <h1 className="text-center purple">Choix des POI</h1>
 

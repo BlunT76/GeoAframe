@@ -1,15 +1,12 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Webcam from 'react-webcam';
+import '../style.css';
 
-const videoContainer = {
-  display: 'block',
-  width: '100%',
-  height: 'auto',
-  overflow: 'none',
-  zIndex: '0',
-};
+class MediaCamera extends PureComponent {
+  setRef = (webcam) => {
+    this.webcam = webcam;
+  };
 
-class MediaCamera extends Component {
   render() {
     const videoConstraints = {
       facingMode: 'environment',
@@ -17,12 +14,10 @@ class MediaCamera extends Component {
 
     return (
       <Webcam
-        style={videoContainer}
+        className="videoContainer"
         audio={false}
-        // width={window.innerWidth}
-        // height={window.innerHeight}
         videoConstraints={videoConstraints}
-        ref={node => (this.webcam = node)}
+        ref={this.setRef}
       />
     );
   }
