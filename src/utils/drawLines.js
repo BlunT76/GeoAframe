@@ -1,6 +1,6 @@
 import projector from 'ecef-projector';
 
-export const drawLines = (route, destlat, destlng, camPosition) => {
+export default (route, destlat, destlng, camPosition) => {
   const result = [];
   let prjstart;
   let prjend;

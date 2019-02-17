@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import Webcam from 'react-webcam';
-import '../style.css';
+import '../css/style.css';
 
 class MediaCamera extends PureComponent {
   setRef = (webcam) => {

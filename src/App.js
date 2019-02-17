@@ -8,7 +8,7 @@ import {
   navigate,
   getPoiPersoAll,
 } from './utils/getPoi';
-import { drawLines } from './utils/drawLines';
+import drawLines from './utils/drawLines';
 import Atext from './components/Atext';
 import Acompass from './components/Acompass';
 import Camera from './components/Camera';
@@ -19,7 +19,6 @@ import sceneStyle from './css/style.css';
 class App extends PureComponent {
   constructor(props) {
     super(props);
-    this.AframeDiv = React.createRef();
     this.watchID = null;
     this.state = {
       camPosition: [0, 0, 0],
