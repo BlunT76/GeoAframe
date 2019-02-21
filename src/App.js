@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import projector from 'ecef-projector';
+import AFRAME from 'aframe';
 import 'aframe-look-at-component';
 import {
   getPoiInnoside,
@@ -48,7 +49,7 @@ class App extends PureComponent {
       window.addEventListener('deviceorientation', this.magnetometerUpdate, true);
     }
     if (window.innerHeight > window.innerWidth) {
-      alert('Le mode paysage est plus adapté à cette apllication!');
+      alert('Le mode paysage est plus adapté à cette application!');
     }
   }
 

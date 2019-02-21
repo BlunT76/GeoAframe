@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App is always the same 1`] = `
+<div>
+  <a-scene
+    className={Object {}}
+    cursor="rayOrigin: mouse"
+    embedded={true}
+    light="defaultLightsEnabled: false"
+    style={
+      Object {
+        "height": 768,
+        "width": 1024,
+      }
+    }
+  >
+    <a-entity>
+      <a-entity
+        camera="active: true"
+        far="1000"
+        id="camera"
+        look-controls="enabled: true"
+        near="0.005"
+        rotation="0 -180 0"
+        userHeight="1.6"
+        wasd-controls={true}
+      />
+    </a-entity>
+    <video
+      autoPlay={true}
+      className="videoContainer"
+      height={480}
+      muted={false}
+      playsInline={true}
+      width={640}
+    />
+    <a-text
+      color="red"
+      position="-6378136.999961403 -10 0"
+      rotation="-90 90 -180"
+      value="N"
+      width="50"
+    />
+    <a-text
+      color="white"
+      position="-6378136.999961403 -10 0"
+      rotation="-90 90 0"
+      value="S"
+      width="50"
+    />
+    <a-text
+      color="white"
+      position="-6378136.999961142 -10 22.2638981586095"
+      rotation="-90 90 90"
+      value="E"
+      width="50"
+    />
+    <a-text
+      color="white"
+      position="-6378136.999961142 -10 -22.2638981586095"
+      rotation="-90 90 -90"
+      value="O"
+      width="50"
+    />
+  </a-scene>
+  <div />
+</div>
+`;

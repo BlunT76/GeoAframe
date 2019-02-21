@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BtnMenu is always the same 1`] = `
+<button
+  className="btn btn-light BtnMenu"
+  onClick={[Function]}
+  type="button"
+>
+  <svg>
+    bars-solid.svg
+  </svg>
+</button>
+`;

@@ -1,0 +1,151 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home is always the same 1`] = `
+<div
+  className="home"
+>
+  <div
+    className="home"
+  >
+    <div
+      className="container-fluid home text-light pl-0 pr-0"
+    >
+      <img
+        alt="logo innoside"
+        className="m-3"
+        height="auto"
+        src="innoside.png"
+        width="30%"
+      />
+      <hr
+        className="m-0"
+        style={
+          Object {
+            "backgroundColor": "white",
+          }
+        }
+      />
+      <div
+        className="container text-light"
+      >
+        <h1
+          className="text-center purple"
+        >
+          Description
+        </h1>
+        <p>
+          Description de l'application a écrire
+        </p>
+        <hr
+          className=""
+          style={
+            Object {
+              "backgroundColor": "white",
+            }
+          }
+        />
+        <h1
+          className="text-center purple"
+        >
+          Choix des POI
+        </h1>
+        <form
+          onSubmit={[Function]}
+        >
+          <div
+            className="form-group form-check "
+          >
+            <input
+              checked={false}
+              className="form-check-input"
+              id="checkInnoside"
+              name="checkInnoside"
+              onChange={[Function]}
+              type="checkbox"
+            />
+            <label
+              className="form-check-label"
+              htmlFor="checkInnoside"
+            >
+              Poi Innoside
+            </label>
+          </div>
+          <div
+            className="form-inline mt-3"
+          >
+            <div
+              className="form-group form-check"
+            >
+              <input
+                checked={false}
+                className="form-check-input"
+                id="checkOverpass"
+                name="checkOverpass"
+                onChange={[Function]}
+                type="checkbox"
+              />
+              <label
+                className="form-check-label mr-2"
+                htmlFor="checkOverpass"
+              >
+                Poi autour de moi
+              </label>
+            </div>
+            <div
+              className="form-group"
+            >
+              <input
+                className="form-control"
+                id="distMax"
+                name="around"
+                onChange={[Function]}
+                placeholder="Distance max"
+                type="number"
+                value={300}
+              />
+              <label
+                htmlFor="distMax"
+              >
+                Distance maximum en mètres
+              </label>
+            </div>
+          </div>
+          <div
+            className="form-group form-check mt-3"
+          >
+            <input
+              checked={false}
+              className="form-check-input"
+              id="checkPerso"
+              name="checkPerso"
+              onChange={[Function]}
+              type="checkbox"
+            />
+            <label
+              className="form-check-label"
+              htmlFor="checkPerso"
+            >
+              Poi personnalisé
+            </label>
+          </div>
+          <button
+            className="btn btn-outline-light btn-lg btn-block"
+            onClick={[Function]}
+            type="button"
+          >
+            Lancer
+          </button>
+        </form>
+        <hr
+          className=""
+          style={
+            Object {
+              "backgroundColor": "white",
+            }
+          }
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -24,7 +24,7 @@ const Atext = (props) => {
         onClick={() => handleOpenModal(value, Number(id), list)}
         geometry={`primitive: plane; height: ${height * 2}; width: ${width / 2};`}
         material={color}
-        text={`value:${value}; width: ${width}; height: ${height};  align: center;`}
+        text={`value:${value}; width: ${width}; height: ${height}; zOffset: 0.5; xOffset: 0.2;  align: center;`}
         position={position}
         rotation={rotation}
         look-at="[camera]"

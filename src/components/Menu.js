@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import logoInnoside from '../img/innoside.png'
+import logoInnoside from '../img/innoside.png';
 
 class Menu extends Component {
   constructor(props) {

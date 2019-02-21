@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MediaCamera is always the same 1`] = `
+<video
+  autoPlay={true}
+  className="videoContainer"
+  height={480}
+  muted={false}
+  playsInline={true}
+  width={640}
+/>
+`;
