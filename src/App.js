@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import projector from 'ecef-projector';
-import AFRAME from 'aframe';
+// import AFRAME from 'aframe';
 import 'aframe-look-at-component';
 import {
   getPoiInnoside,
@@ -43,10 +43,9 @@ class App extends PureComponent {
 
   componentDidMount() {
     this.updateCamPosition();
-    if (window.DeviceOrientation === undefined) {
-      alert('No magnetometer \nUse your fingers to swipe the screen');
-    } else {
+    if (window.DeviceOrientationEvent) {
       window.addEventListener('deviceorientation', this.magnetometerUpdate, true);
+      // alert('No magnetometer \nUse your fingers to swipe the screen');
     }
     if (window.innerHeight > window.innerWidth) {
       alert('Le mode paysage est plus adapté à cette application!');
@@ -58,14 +57,17 @@ class App extends PureComponent {
     window.removeEventListener('deviceorientation', this.magnetometerUpdate, true);
   }
 
-  magnetometerUpdate = ({ alpha }) => {
+  magnetometerUpdate = (e) => {
+    let { alpha } = e;
+    const { gamma } = e;
+    if (!alpha) return;
+    if (gamma > 0) alpha -= 180;
     const { orientationPrevious } = this.state;
     let nextVal = null;
-
     if (orientationPrevious === null) {
       this.setState({ orientationPrevious: alpha });
     }
-
+    // nextVal = (orientationPrevious * 4 + alpha) / 5;
     const tmpPrevious = (orientationPrevious % 360) / 180;
 
     if ((tmpPrevious >= 1 && alpha / 180 >= 1) || ((tmpPrevious) <= 1 && alpha / 180 <= 1)) {
@@ -148,7 +150,7 @@ class App extends PureComponent {
       this.setState({ isList: false });
     }, {
       enableHighAccuracy: true,
-      maximumAge: 1000,
+      maximumAge: 3000,
       timeout: 2000,
     });
   }
