@@ -1,4 +1,16 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Projet de stage chez Innoside
+PWA de réalité augmentée en React + Aframe(Three.js)
+Objectif: PoC permettant d'afficher un poi (latitude, longitude) avec Aframe en convertissant les coordonnées gps en coordonnées cartésiennes, avec la caméra du mobile en arrière plan.
+
+Testable en ligne sur heroku:
+
+https://inaframe.herokuapp.com/
+
+Sélectionner "Poi autour de moi" puis Lancer, ajuster la distance max si nécessaire.
+
+
+
+## This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
